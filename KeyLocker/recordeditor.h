@@ -21,6 +21,10 @@ private slots:
 
     void on_addBtn_clicked();
 
+signals:
+    void sendRecord(Record record);
+
+
 private:
     Ui::RecordEditor *ui;
 

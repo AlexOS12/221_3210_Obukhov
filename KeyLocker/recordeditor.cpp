@@ -32,6 +32,9 @@ void RecordEditor::on_addBtn_clicked()
     Record record(site, login, pass);
 
     clear();
+
+    emit sendRecord(record);
+
     this->close();
 }
 

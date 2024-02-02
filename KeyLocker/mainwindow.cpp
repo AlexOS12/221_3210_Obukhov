@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     homeDir = QDir::homePath() + "/KeyLocker";
 
+    QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
+
 }
 
 MainWindow::~MainWindow()
@@ -37,6 +39,12 @@ MainWindow::~MainWindow()
     }
 
     delete ui;
+}
+
+void MainWindow::addRecord(Record record)
+{
+    ui->searchLine->setText(record.site);
+    records.push_back(record);
 }
 
 void MainWindow::on_addRecord_clicked()
