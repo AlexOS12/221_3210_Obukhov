@@ -11,15 +11,20 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     authwindow.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    record.cpp \
+    recordeditor.cpp
 
 HEADERS += \
     authwindow.h \
-    mainwindow.h
+    mainwindow.h \
+    record.h \
+    recordeditor.h
 
 FORMS += \
     authwindow.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    recordeditor.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
