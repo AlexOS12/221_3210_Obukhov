@@ -90,7 +90,7 @@ void AuthWindow::on_EnterBtn_clicked()
 
     if (PIN == pin) {
         ui->EnterBtn->setText("OK");
-        mainwindow.show();
+        mainWindow.show();
         this->close();
     } else {
         ui->EnterBtn->setText("NOT OK");

@@ -47,6 +47,6 @@ private slots:
 
 private:
     Ui::AuthWindow *ui;
-    MainWindow mainwindow;
+    MainWindow mainWindow;
 };
 #endif // AUTHWINDOW_H
