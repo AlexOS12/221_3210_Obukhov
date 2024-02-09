@@ -13,7 +13,7 @@ AuthWindow::~AuthWindow()
     delete ui;
 }
 
-// Äåéñòâèÿ äëÿ êíîïîê
+// Ð”ÐµÐ¹ÑÑ‚Ð²Ð¸Ñ Ð´Ð»Ñ ÐºÐ½Ð¾Ð¿Ð¾Ðº
 void AuthWindow::on_PinBtn1_clicked()
 {
     ui->PinEdit->setText(ui->PinEdit->text() + "1");
