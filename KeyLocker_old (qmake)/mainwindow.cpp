@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    // запись аккаунтов в json
+    // Р·Р°РїРёСЃСЊ Р°РєРєР°СѓРЅС‚РѕРІ РІ json
     QJsonArray array;
 
     for (Record record : records) {
