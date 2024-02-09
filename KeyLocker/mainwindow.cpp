@@ -2,6 +2,31 @@
 #include "ui_mainwindow.h"
 
 
+bool MainWindow::readRecords()
+{
+    QFile file;
+    file.setFileName(homeDir + "/test.json");
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return false;
+    } else {
+        QJsonDocument jsonDoc;
+        jsonDoc = QJsonDocument::fromJson(file.readAll());
+        QJsonArray jsonArray = jsonDoc.array();
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            QJsonValue value = jsonArray.at(i);
+            QString site = value["site"].toString();
+            QString login = value["login"].toString();
+            QString pass = value["pass"].toString();
+
+            Record record(site, login, pass);
+            records.append(record);
+        }
+    }
+    return true;
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainWindow)
@@ -9,9 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     homeDir = QDir::homePath() + "/KeyLocker";
-
+    readRecords();
     QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
-
 }
 
 MainWindow::~MainWindow()

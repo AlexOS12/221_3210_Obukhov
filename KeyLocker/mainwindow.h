@@ -21,6 +21,8 @@ class MainWindow : public QWidget
 private:
     QString homeDir;
     QList<Record> records;
+
+    bool readRecords();
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
