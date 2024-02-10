@@ -89,11 +89,9 @@ void AuthWindow::on_EnterBtn_clicked()
     QString pin = ui->PinEdit->text();
 
     if (PIN == pin) {
-        ui->EnterBtn->setText("OK");
-        mainWindow.show();
-        this->close();
+        sendAuthResult(true);
     } else {
-        ui->EnterBtn->setText("NOT OK");
+        sendAuthResult(false);
     }
 }
 

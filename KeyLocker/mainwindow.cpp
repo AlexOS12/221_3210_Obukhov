@@ -34,7 +34,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     homeDir = QDir::homePath() + "/KeyLocker";
-    readRecords();
     QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
 }
 
@@ -56,7 +55,6 @@ MainWindow::~MainWindow()
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         file.close();
     } else {
-        file.Truncate;
         QTextStream out(&file);
         out << jsonDoc.toJson(QJsonDocument::Compact);
         file.close();

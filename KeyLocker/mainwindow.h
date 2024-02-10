@@ -22,8 +22,8 @@ private:
     QString homeDir;
     QList<Record> records;
 
-    bool readRecords();
 public:
+    bool readRecords();
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 

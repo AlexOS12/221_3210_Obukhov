@@ -1,11 +1,14 @@
-#include "authwindow.h"
+#include "initiator.h"
 
+#include <QObject>
 #include <QApplication>
+
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    AuthWindow authWindow;
-    authWindow.show();
+
+    Initiator initiator;
+
     return a.exec();
 }

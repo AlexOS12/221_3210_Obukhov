@@ -45,6 +45,9 @@ private slots:
 
     void on_EnterBtn_clicked();
 
+signals:
+    void sendAuthResult(bool authResult);
+
 private:
     Ui::AuthWindow *ui;
     MainWindow mainWindow;
