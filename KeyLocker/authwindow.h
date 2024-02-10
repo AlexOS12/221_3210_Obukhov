@@ -50,6 +50,5 @@ signals:
 
 private:
     Ui::AuthWindow *ui;
-    MainWindow mainWindow;
 };
 #endif // AUTHWINDOW_H

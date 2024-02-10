@@ -24,6 +24,7 @@ bool MainWindow::readRecords()
             records.append(record);
         }
     }
+    displayRecords();
     return true;
 }
 
@@ -41,7 +42,6 @@ MainWindow::~MainWindow()
 {
     // запись аккаунтов в json
     QJsonArray array;
-
     for (Record record : records) {
         array.push_back(record.toJson());
     }
@@ -55,6 +55,7 @@ MainWindow::~MainWindow()
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         file.close();
     } else {
+        file.Truncate;
         QTextStream out(&file);
         out << jsonDoc.toJson(QJsonDocument::Compact);
         file.close();
@@ -73,5 +74,12 @@ void MainWindow::on_addRecord_clicked()
 {
     recordEditor.setWindowFlag(Qt::WindowMinMaxButtonsHint, false);
     recordEditor.show();
+}
+
+void MainWindow::displayRecords()
+{
+    for (Record record : records) {
+        ui->listWidget->addItem(record.site);
+    }
 }
 
