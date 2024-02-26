@@ -55,7 +55,6 @@ MainWindow::~MainWindow()
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         file.close();
     } else {
-        file.Truncate;
         QTextStream out(&file);
         out << jsonDoc.toJson(QJsonDocument::Compact);
         file.close();
@@ -72,7 +71,6 @@ void MainWindow::addRecord(Record record)
 
 void MainWindow::on_addRecord_clicked()
 {
-    recordEditor.setWindowFlag(Qt::WindowMinMaxButtonsHint, false);
     recordEditor.show();
 }
 
@@ -81,5 +79,13 @@ void MainWindow::displayRecords()
     for (Record record : records) {
         ui->listWidget->addItem(record.site);
     }
+}
+
+
+void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
+{
+    uint recordId = ui->listWidget->currentRow();
+    recordViewer.show();
+    recordViewer.getRecord(records[recordId]);
 }
 

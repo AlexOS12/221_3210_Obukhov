@@ -1,5 +1,7 @@
 #include "record.h"
 
+Record::Record() {}
+
 Record::Record(QString site, QString login, QString pass) {
     this->site = site;
     this->login = login;

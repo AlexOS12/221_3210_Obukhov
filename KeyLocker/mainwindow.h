@@ -10,6 +10,7 @@
 #include <QDialog>
 #include "record.h"
 #include "recordeditor.h"
+#include "recordviewer.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,11 +34,14 @@ public slots:
 private slots:
     void on_addRecord_clicked();
 
+    void on_listWidget_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
 
     void displayRecords();
     RecordEditor recordEditor;
+    recordViewer recordViewer;
 };
 
 #endif // MAINWINDOW_H
