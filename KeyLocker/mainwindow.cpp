@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "encryptor.h"
 
 bool MainWindow::readRecords()
 {
@@ -36,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     homeDir = QDir::homePath() + "/KeyLocker";
     QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
+    Encryptor& ptr = Encryptor::getInstance();
+    ptr.test(homeDir + "/encTest.txt");
 }
 
 MainWindow::~MainWindow()
