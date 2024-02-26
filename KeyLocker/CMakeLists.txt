@@ -50,6 +50,15 @@ endif()
 
 target_link_libraries(KeyLocker PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
+set(OPENSSL_ROOT_DIR "C:/Qt/Tools/OpenSSLv3/Win_x64/lib")
+set(OPENSSL_INCLUDE_DIR "C:/Qt/Tools/OpenSSLv3/Win_x64/include")
+find_package(OpenSSL REQUIRED)
+
+target_link_libraries(
+KeyLocker # к какой цели подключать
+PRIVATE # в каком режиме подключать
+${CMAKE_DL_LIBS} OpenSSL::SSL OpenSSL::Crypto) # что именно подключать
+
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.

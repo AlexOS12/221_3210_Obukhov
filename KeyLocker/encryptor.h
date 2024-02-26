@@ -2,6 +2,7 @@
 #define ENCRYPTOR_H
 
 #include <QByteArray>
+#include <openssl/evp.h>
 
 class Encryptor
 {
