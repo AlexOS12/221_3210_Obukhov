@@ -6,6 +6,7 @@ RecordEditor::RecordEditor(QWidget *parent)
     , ui(new Ui::RecordEditor)
 {
     ui->setupUi(this);
+    this->setWindowFlag(Qt::SplashScreen, true);
 }
 
 RecordEditor::~RecordEditor()

@@ -10,6 +10,7 @@ private:
     QString login;
     QString pass;
 public:
+    Record();
     Record(QString site, QString login, QString pass);
     QString site;
     QString getPass();
