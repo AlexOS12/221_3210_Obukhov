@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "encryptor.h"
 
 bool MainWindow::readRecords()
 {
@@ -10,8 +9,14 @@ bool MainWindow::readRecords()
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return false;
     } else {
+        QByteArray fileContent = QByteArray::fromHex(file.readAll());
+        qDebug() << fileContent;
+        QByteArray decryptedFile;
+        Encryptor::getInstance().decrypt(fileContent, decryptedFile);
+        qDebug() << "Decrypted:";
+        qDebug() << decryptedFile;
         QJsonDocument jsonDoc;
-        jsonDoc = QJsonDocument::fromJson(file.readAll());
+        jsonDoc = QJsonDocument::fromJson(decryptedFile);
         QJsonArray jsonArray = jsonDoc.array();
 
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -35,8 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     homeDir = QDir::homePath() + "/KeyLocker";
     QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
-    Encryptor& ptr = Encryptor::getInstance();
-    ptr.test(homeDir + "/encTest.txt");
 }
 
 MainWindow::~MainWindow()
@@ -56,8 +59,14 @@ MainWindow::~MainWindow()
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         file.close();
     } else {
+        QByteArray encryptedFile;
+        QByteArray json = jsonDoc.toJson(QJsonDocument::Compact);
+        qDebug() << json;
+        Encryptor::getInstance().encrypt(json, encryptedFile);
+        qDebug() << "Encrypted";
+        qDebug() << encryptedFile;
         QTextStream out(&file);
-        out << jsonDoc.toJson(QJsonDocument::Compact);
+        out << encryptedFile.toHex();
         file.close();
     }
 
