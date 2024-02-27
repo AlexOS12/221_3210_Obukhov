@@ -50,9 +50,13 @@ endif()
 
 target_link_libraries(KeyLocker PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-set(OPENSSL_ROOT_DIR "C:/Qt/Tools/OpenSSLv3/Win_x64/lib")
-set(OPENSSL_INCLUDE_DIR "C:/Qt/Tools/OpenSSLv3/Win_x64/include")
-find_package(OpenSSL REQUIRED)
+if (WIN32)
+    set(OPENSSL_ROOT_DIR "C:/Qt/Tools/OpenSSLv3/Win_x64/lib")
+    set(OPENSSL_INCLUDE_DIR "C:/Qt/Tools/OpenSSLv3/Win_x64/include")
+    find_package(OpenSSL REQUIRED)
+elseif (UNIX)
+    include(FindOpenSSL)
+endif()
 
 target_link_libraries(
 KeyLocker # к какой цели подключать

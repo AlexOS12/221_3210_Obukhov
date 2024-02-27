@@ -1,9 +1,9 @@
 #include "recordviewer.h"
 #include "ui_recordviewer.h"
 
-recordViewer::recordViewer(QWidget *parent)
+RecordViewer::RecordViewer(QWidget *parent)
     : QWidget(parent)
-    , ui(new Ui::recordViewer)
+    , ui(new Ui::RecordViewer)
 {
     ui->setupUi(this);
     this->setWindowFlag(Qt::WindowMinMaxButtonsHint, false);
@@ -11,25 +11,25 @@ recordViewer::recordViewer(QWidget *parent)
     this->passVisible = false;
 }
 
-void recordViewer::getRecord(Record record)
+void RecordViewer::getRecord(Record record)
 {
     this->record = record;
     displayRecord();
 }
 
-recordViewer::~recordViewer()
+RecordViewer::~RecordViewer()
 {
     delete ui;
 }
 
-void recordViewer::displayRecord()
+void RecordViewer::displayRecord()
 {
     ui->siteView->setText(record.site);
     ui->loginView->setText(record.getLogin());
     ui->passView->setText(record.getPass());
 }
 
-void recordViewer::on_showLoginBtn_clicked()
+void RecordViewer::on_showLoginBtn_clicked()
 {
     if (loginVisible) {
         ui->loginView->setEchoMode(QLineEdit::Password);
@@ -40,7 +40,7 @@ void recordViewer::on_showLoginBtn_clicked()
 }
 
 
-void recordViewer::on_showPassBtn_clicked()
+void RecordViewer::on_showPassBtn_clicked()
 {
     if (passVisible) {
         ui->passView->setEchoMode(QLineEdit::Password);
@@ -51,7 +51,7 @@ void recordViewer::on_showPassBtn_clicked()
 }
 
 
-void recordViewer::on_okBtn_clicked()
+void RecordViewer::on_okBtn_clicked()
 {
     this->close();
 }

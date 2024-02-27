@@ -5,17 +5,17 @@
 #include <QWidget>
 
 namespace Ui {
-class recordViewer;
+class RecordViewer;
 }
 
-class recordViewer : public QWidget
+class RecordViewer : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit recordViewer(QWidget *parent = nullptr);
+    explicit RecordViewer(QWidget *parent = nullptr);
     void getRecord(Record record);
-    ~recordViewer();
+    ~RecordViewer();
 
 private slots:
     void on_showLoginBtn_clicked();
@@ -28,7 +28,7 @@ private:
     bool loginVisible;
     bool passVisible;
 
-    Ui::recordViewer *ui;
+    Ui::RecordViewer *ui;
     Record record;
     void displayRecord();
 };

@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
     homeDir = QDir::homePath() + "/KeyLocker";
     QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
     Encryptor& ptr = Encryptor::getInstance();

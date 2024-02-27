@@ -6,6 +6,7 @@ void Encryptor::test(QString path)
     file.setFileName(path);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "File Read Error!";
         file.close();
     } else {
         QByteArray fileContent = file.readAll();
