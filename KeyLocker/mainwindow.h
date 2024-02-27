@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDialog>
+#include "encryptor.h"
 #include "record.h"
 #include "recordeditor.h"
 #include "recordviewer.h"
@@ -38,7 +39,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-
     void displayRecords();
     RecordEditor recordEditor;
     RecordViewer recordViewer;

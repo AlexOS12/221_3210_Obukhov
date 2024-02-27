@@ -26,8 +26,8 @@ int Encryptor::encrypt(QByteArray &in, QByteArray &out)
     unsigned char encBuffer[buffLen] = {0},
         decBuffer[buffLen] = {0};
     int encLen, decLen;
-    QDataStream encStream(in);
-    QDataStream decStream(&out, QIODevice::ReadWrite);
+    QDataStream encStream(&out, QIODevice::ReadWrite);
+    QDataStream decStream(in);
 
     memcpy(key, this->keyQBA.data(), 32);
     memcpy(iv, this->ivQBA.data(), 16);
@@ -35,7 +35,7 @@ int Encryptor::encrypt(QByteArray &in, QByteArray &out)
     EVP_CIPHER_CTX *ctx;
     ctx = EVP_CIPHER_CTX_new();
 
-    if (!EVP_DecryptInit_ex2(ctx, EVP_aes_256_cbc(), key, iv, NULL)) {
+    if (!EVP_EncryptInit_ex2(ctx, EVP_aes_256_cbc(), key, iv, NULL)) {
         EVP_CIPHER_CTX_free(ctx);
         return 1;
     }
