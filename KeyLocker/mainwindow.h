@@ -41,7 +41,7 @@ private:
 
     void displayRecords();
     RecordEditor recordEditor;
-    recordViewer recordViewer;
+    RecordViewer recordViewer;
 };
 
 #endif // MAINWINDOW_H
