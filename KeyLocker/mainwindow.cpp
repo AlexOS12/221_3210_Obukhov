@@ -109,14 +109,36 @@ void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pinEdit_returnPressed()
 {
-    if (PIN == ui->pinEdit->text()) {
-        ui->stackedWidget->setCurrentIndex(1);
-        ui->wrongPassLbl->hide();
-        this->readRecords();
-    } else {
-        ui->pinEdit->clear();
+    QFile PinContainer;
+    PinContainer.setFileName(homeDir + "/pin.txt");
+
+    if (!PinContainer.open(QIODevice::ReadOnly | QIODevice::Text)) {
         ui->wrongPassLbl->show();
+        ui->wrongPassLbl->setText("Не удалось прочитать файл с пином");
+    } else {
+        QByteArray pin = QByteArray::fromHex(PinContainer.readAll());
+        QByteArray linePin = ui->pinEdit->text().toUtf8();
+        QByteArray md5pin = QCryptographicHash::hash(linePin, QCryptographicHash::Md5);
+        qDebug() << md5pin;
+        qDebug() << pin;
+        if (md5pin == pin) {
+            ui->stackedWidget->setCurrentIndex(1);
+            ui->wrongPassLbl->hide();
+        } else {
+            ui->pinEdit->clear();
+            ui->wrongPassLbl->setText("Неверный пин-код");
+            ui->wrongPassLbl->show();
+        }
     }
+
+    // if (PIN == ui->pinEdit->text()) {
+    //     ui->stackedWidget->setCurrentIndex(1);
+    //     ui->wrongPassLbl->hide();
+    //     this->readRecords();
+    // } else {
+    //     ui->pinEdit->clear();
+    //     ui->wrongPassLbl->show();
+    // }
 }
 
 

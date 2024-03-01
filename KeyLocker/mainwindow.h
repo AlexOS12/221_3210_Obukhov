@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDialog>
+#include <QCryptographicHash>
 #include "encryptor.h"
 #include "record.h"
 #include "recordeditor.h"
