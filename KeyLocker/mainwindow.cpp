@@ -5,7 +5,6 @@ bool MainWindow::readRecords()
 {
     QFile file;
     file.setFileName(homeDir + "/test.json");
-
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return false;
     } else {
@@ -38,13 +37,14 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->wrongPassLbl->hide();
     homeDir = QDir::homePath() + "/KeyLocker";
     QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
 }
 
 MainWindow::~MainWindow()
 {
-    // запись аккаунтов в json
+    // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ json
     QJsonArray array;
     for (Record record : records) {
         array.push_back(record.toJson());
@@ -97,5 +97,18 @@ void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
     uint recordId = ui->listWidget->currentRow();
     recordViewer.show();
     recordViewer.getRecord(records[recordId]);
+}
+
+
+void MainWindow::on_pinEdit_returnPressed()
+{
+    if (PIN == ui->pinEdit->text()) {
+        ui->stackedWidget->setCurrentIndex(1);
+        ui->wrongPassLbl->hide();
+        this->readRecords();
+    } else {
+        ui->pinEdit->clear();
+        ui->wrongPassLbl->show();
+    }
 }
 

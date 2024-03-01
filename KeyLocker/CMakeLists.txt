@@ -14,9 +14,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        authwindow.cpp
-        authwindow.h
-        authwindow.ui
+
+
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -26,7 +26,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         mainwindow.h mainwindow.cpp mainwindow.ui
         recordeditor.h recordeditor.cpp recordeditor.ui
         record.h record.cpp
-        initiator.h initiator.cpp
+
         recordviewer.h recordviewer.cpp recordviewer.ui
         encryptor.h encryptor.cpp
     )
@@ -59,9 +59,9 @@ elseif (UNIX)
 endif()
 
 target_link_libraries(
-KeyLocker # к какой цели подключать
-PRIVATE # в каком режиме подключать
-${CMAKE_DL_LIBS} OpenSSL::SSL OpenSSL::Crypto) # что именно подключать
+KeyLocker # пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+PRIVATE # пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+${CMAKE_DL_LIBS} OpenSSL::SSL OpenSSL::Crypto) # пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

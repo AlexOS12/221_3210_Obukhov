@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define PIN "1234"
+
 #include <QWidget>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -36,6 +38,8 @@ private slots:
     void on_addRecord_clicked();
 
     void on_listWidget_doubleClicked(const QModelIndex &index);
+
+    void on_pinEdit_returnPressed();
 
 private:
     Ui::MainWindow *ui;
