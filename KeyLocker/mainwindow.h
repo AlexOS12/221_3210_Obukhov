@@ -47,10 +47,15 @@ private slots:
 
     void on_okBtn_clicked();
 
+    void on_changePinBtn_clicked();
+
+    void on_newPinEdit_returnPressed();
+
 private:
     Ui::MainWindow *ui;
     void displayRecords();
     void showRecord(uint recordId);
+    bool changePinMenuOpened = false;
     RecordEditor recordEditor;
 };
 
