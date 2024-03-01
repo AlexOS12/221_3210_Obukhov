@@ -1,4 +1,4 @@
-#include "initiator.h"
+#include "mainwindow.h"
 
 #include <QObject>
 #include <QApplication>
@@ -7,7 +7,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Initiator initiator;
+    MainWindow w;
+    w.show();
 
     return a.exec();
 }

@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define PIN "1234"
+
 #include <QWidget>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -11,7 +13,6 @@
 #include "encryptor.h"
 #include "record.h"
 #include "recordeditor.h"
-#include "recordviewer.h"
 
 namespace Ui {
 class MainWindow;
@@ -37,11 +38,19 @@ private slots:
 
     void on_listWidget_doubleClicked(const QModelIndex &index);
 
+    void on_pinEdit_returnPressed();
+
+    void on_showLoginBtn_clicked();
+
+    void on_showPassBtn_clicked();
+
+    void on_okBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
     void displayRecords();
+    void showRecord(uint recordId);
     RecordEditor recordEditor;
-    RecordViewer recordViewer;
 };
 
 #endif // MAINWINDOW_H
