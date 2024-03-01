@@ -75,8 +75,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::addRecord(Record record)
 {
-    ui->searchLine->setText(record.site);
     records.push_back(record);
+    ui->listWidget->addItem(record.site);
 }
 
 void MainWindow::on_addRecord_clicked()
@@ -91,12 +91,19 @@ void MainWindow::displayRecords()
     }
 }
 
+void MainWindow::showRecord(uint recordId)
+{
+    ui->siteView->setText(records[recordId].site);
+    ui->loginView->setText(records[recordId].getLogin());
+    ui->passView->setText(records[recordId].getPass());
+}
+
 
 void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 {
     uint recordId = ui->listWidget->currentRow();
-    recordViewer.show();
-    recordViewer.getRecord(records[recordId]);
+    ui->stackedWidget->setCurrentIndex(2);
+    showRecord(recordId);
 }
 
 
@@ -110,5 +117,36 @@ void MainWindow::on_pinEdit_returnPressed()
         ui->pinEdit->clear();
         ui->wrongPassLbl->show();
     }
+}
+
+
+void MainWindow::on_showLoginBtn_clicked()
+{
+    if (ui->loginView->echoMode() == QLineEdit::Password) {
+        ui->loginView->setEchoMode(QLineEdit::Normal);
+    } else {
+        ui->loginView->setEchoMode(QLineEdit::Password);
+    }
+}
+
+
+void MainWindow::on_showPassBtn_clicked()
+{
+    if (ui->passView->echoMode() == QLineEdit::Password) {
+        ui->passView->setEchoMode(QLineEdit::Normal);
+    } else {
+        ui->passView->setEchoMode(QLineEdit::Password);
+    }
+}
+
+
+void MainWindow::on_okBtn_clicked()
+{
+    ui->siteView->setText("");
+    ui->loginView->setText("");
+    ui->loginView->setEchoMode(QLineEdit::Password);
+    ui->passView->setText("");
+    ui->passView->setEchoMode(QLineEdit::Password);
+    ui->stackedWidget->setCurrentIndex(1);
 }
 

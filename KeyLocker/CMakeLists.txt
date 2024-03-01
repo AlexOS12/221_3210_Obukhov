@@ -27,7 +27,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         recordeditor.h recordeditor.cpp recordeditor.ui
         record.h record.cpp
 
-        recordviewer.h recordviewer.cpp recordviewer.ui
+
         encryptor.h encryptor.cpp
     )
 # Define target properties for Android with Qt 6 as:
