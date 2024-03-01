@@ -29,6 +29,7 @@ bool MainWindow::readRecords()
         }
     }
     displayRecords();
+    file.close();
     return true;
 }
 
@@ -38,6 +39,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->wrongPassLbl->hide();
+    ui->changePinResult->hide();
+    ui->oldPinEdit->hide();
+    ui->newPinEdit->hide();
+    ui->confPinEdit->hide();
     homeDir = QDir::homePath() + "/KeyLocker";
     QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
 }
@@ -109,14 +114,14 @@ void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pinEdit_returnPressed()
 {
-    QFile PinContainer;
-    PinContainer.setFileName(homeDir + "/pin.txt");
+    QFile pinContainer;
+    pinContainer.setFileName(homeDir + "/pin.txt");
 
-    if (!PinContainer.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!pinContainer.open(QIODevice::ReadOnly | QIODevice::Text)) {
         ui->wrongPassLbl->show();
         ui->wrongPassLbl->setText("РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРѕС‡РёС‚Р°С‚СЊ С„Р°Р№Р» СЃ РїРёРЅРѕРј");
     } else {
-        QByteArray pin = QByteArray::fromHex(PinContainer.readAll());
+        QByteArray pin = QByteArray::fromHex(pinContainer.readAll());
         QByteArray linePin = ui->pinEdit->text().toUtf8();
         QByteArray md5pin = QCryptographicHash::hash(linePin, QCryptographicHash::Md5);
         qDebug() << md5pin;
@@ -124,21 +129,13 @@ void MainWindow::on_pinEdit_returnPressed()
         if (md5pin == pin) {
             ui->stackedWidget->setCurrentIndex(1);
             ui->wrongPassLbl->hide();
+            readRecords();
         } else {
             ui->pinEdit->clear();
             ui->wrongPassLbl->setText("РќРµРІРµСЂРЅС‹Р№ РїРёРЅ-РєРѕРґ");
             ui->wrongPassLbl->show();
         }
     }
-
-    // if (PIN == ui->pinEdit->text()) {
-    //     ui->stackedWidget->setCurrentIndex(1);
-    //     ui->wrongPassLbl->hide();
-    //     this->readRecords();
-    // } else {
-    //     ui->pinEdit->clear();
-    //     ui->wrongPassLbl->show();
-    // }
 }
 
 
@@ -170,5 +167,74 @@ void MainWindow::on_okBtn_clicked()
     ui->passView->setText("");
     ui->passView->setEchoMode(QLineEdit::Password);
     ui->stackedWidget->setCurrentIndex(1);
+}
+
+
+void MainWindow::on_changePinBtn_clicked()
+{
+    if (changePinMenuOpened) {
+        ui->newPinEdit->hide();
+        ui->oldPinEdit->hide();
+        ui->confPinEdit->hide();
+        ui->changePinResult->hide();
+    } else {
+        ui->newPinEdit->show();
+        ui->oldPinEdit->show();
+        ui->confPinEdit->show();
+        ui->changePinResult->hide();
+    }
+    changePinMenuOpened = !changePinMenuOpened;
+}
+
+
+void MainWindow::on_newPinEdit_returnPressed()
+{
+    QFile pinContainer;
+    pinContainer.setFileName(homeDir + "/pin.txt");
+
+    if (!pinContainer.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        ui->changePinResult->show();
+        ui->changePinResult->setText("Не удалось открыть файл с пином");
+        qDebug() << "Failed to open pin file";
+        ui->changePinResult->setStyleSheet("color: rgb(255, 0, 0);");
+    } else {
+        QByteArray currPin = QByteArray::fromHex(pinContainer.readAll());
+        pinContainer.close();
+        QByteArray oldPin = ui->oldPinEdit->text().toUtf8();
+        QByteArray oldMd5Pin = QCryptographicHash::hash(oldPin, QCryptographicHash::Md5);
+        if (oldMd5Pin != currPin) {
+            ui->changePinResult->show();
+            ui->changePinResult->setText("Введен неверный старый пин!");
+            qDebug() << "Old pin is wrong";
+            ui->changePinResult->setStyleSheet("color: rgb(255, 0, 0);");
+            return;
+        }
+        if (ui->newPinEdit->text() != ui->confPinEdit->text()) {
+            ui->changePinResult->show();
+            ui->changePinResult->setText("Новые пины различаются!");
+            qDebug() << "New pins a different";
+            ui->changePinResult->setStyleSheet("color: rgb(255, 0, 0);");
+            return;
+        }
+
+        QByteArray newMd5Pin = QCryptographicHash::hash(ui->newPinEdit->text().toUtf8(), QCryptographicHash::Md5);
+        QFile newPinWriter;
+        newPinWriter.setFileName(homeDir + "/pin.txt");
+
+        if (!newPinWriter.open(QIODevice::ReadWrite | QIODevice::Text)) {
+            ui->changePinResult->show();
+            ui->changePinResult->setText("Не удалось сохранить новый пин!");
+            ui->changePinResult->setStyleSheet("color: rgb(255, 0, 0);");
+            return;
+        }
+
+        ui->changePinResult->show();
+        ui->changePinResult->setText("Пин успешно изменён!");
+        ui->changePinResult->setStyleSheet("color: rgb(0, 0, 0);");
+
+        QTextStream out(&newPinWriter);
+        out << newMd5Pin.toHex();
+        newPinWriter.close();
+    }
 }
 

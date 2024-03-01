@@ -107,6 +107,48 @@
      </widget>
      <widget class="QWidget" name="page_2">
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="2" column="0">
+        <widget class="QListWidget" name="listWidget"/>
+       </item>
+       <item row="1" column="0">
+        <layout class="QGridLayout" name="changePinLayout">
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLineEdit" name="oldPinEdit">
+             <property name="placeholderText">
+              <string>Введите старый пин</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="confPinEdit">
+             <property name="placeholderText">
+              <string>Введите новый пин</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="newPinEdit">
+             <property name="placeholderText">
+              <string>Введите новый пин снова</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="changePinResult">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
@@ -119,10 +161,14 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="changePinBtn">
+           <property name="text">
+            <string>Сменить PIN</string>
+           </property>
+          </widget>
+         </item>
         </layout>
-       </item>
-       <item row="1" column="0">
-        <widget class="QListWidget" name="listWidget"/>
        </item>
       </layout>
      </widget>
