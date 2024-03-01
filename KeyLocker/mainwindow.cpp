@@ -1,17 +1,21 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 bool MainWindow::readRecords()
 {
     QFile file;
     file.setFileName(homeDir + "/test.json");
-
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return false;
     } else {
+        QByteArray fileContent = QByteArray::fromHex(file.readAll());
+        qDebug() << fileContent;
+        QByteArray decryptedFile;
+        Encryptor::getInstance().decrypt(fileContent, decryptedFile);
+        qDebug() << "Decrypted:";
+        qDebug() << decryptedFile;
         QJsonDocument jsonDoc;
-        jsonDoc = QJsonDocument::fromJson(file.readAll());
+        jsonDoc = QJsonDocument::fromJson(decryptedFile);
         QJsonArray jsonArray = jsonDoc.array();
 
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -33,14 +37,14 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    ui->wrongPassLbl->hide();
     homeDir = QDir::homePath() + "/KeyLocker";
     QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
 }
 
 MainWindow::~MainWindow()
 {
-    // запись аккаунтов в json
+    // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ json
     QJsonArray array;
     for (Record record : records) {
         array.push_back(record.toJson());
@@ -55,8 +59,14 @@ MainWindow::~MainWindow()
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         file.close();
     } else {
+        QByteArray encryptedFile;
+        QByteArray json = jsonDoc.toJson(QJsonDocument::Compact);
+        qDebug() << json;
+        Encryptor::getInstance().encrypt(json, encryptedFile);
+        qDebug() << "Encrypted";
+        qDebug() << encryptedFile;
         QTextStream out(&file);
-        out << jsonDoc.toJson(QJsonDocument::Compact);
+        out << encryptedFile.toHex();
         file.close();
     }
 
@@ -65,8 +75,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::addRecord(Record record)
 {
-    ui->searchLine->setText(record.site);
     records.push_back(record);
+    ui->listWidget->addItem(record.site);
 }
 
 void MainWindow::on_addRecord_clicked()
@@ -81,11 +91,62 @@ void MainWindow::displayRecords()
     }
 }
 
+void MainWindow::showRecord(uint recordId)
+{
+    ui->siteView->setText(records[recordId].site);
+    ui->loginView->setText(records[recordId].getLogin());
+    ui->passView->setText(records[recordId].getPass());
+}
+
 
 void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 {
     uint recordId = ui->listWidget->currentRow();
-    recordViewer.show();
-    recordViewer.getRecord(records[recordId]);
+    ui->stackedWidget->setCurrentIndex(2);
+    showRecord(recordId);
+}
+
+
+void MainWindow::on_pinEdit_returnPressed()
+{
+    if (PIN == ui->pinEdit->text()) {
+        ui->stackedWidget->setCurrentIndex(1);
+        ui->wrongPassLbl->hide();
+        this->readRecords();
+    } else {
+        ui->pinEdit->clear();
+        ui->wrongPassLbl->show();
+    }
+}
+
+
+void MainWindow::on_showLoginBtn_clicked()
+{
+    if (ui->loginView->echoMode() == QLineEdit::Password) {
+        ui->loginView->setEchoMode(QLineEdit::Normal);
+    } else {
+        ui->loginView->setEchoMode(QLineEdit::Password);
+    }
+}
+
+
+void MainWindow::on_showPassBtn_clicked()
+{
+    if (ui->passView->echoMode() == QLineEdit::Password) {
+        ui->passView->setEchoMode(QLineEdit::Normal);
+    } else {
+        ui->passView->setEchoMode(QLineEdit::Password);
+    }
+}
+
+
+void MainWindow::on_okBtn_clicked()
+{
+    ui->siteView->setText("");
+    ui->loginView->setText("");
+    ui->loginView->setEchoMode(QLineEdit::Password);
+    ui->passView->setText("");
+    ui->passView->setEchoMode(QLineEdit::Password);
+    ui->stackedWidget->setCurrentIndex(1);
 }
 

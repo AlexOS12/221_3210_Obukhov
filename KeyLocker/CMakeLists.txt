@@ -14,9 +14,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        authwindow.cpp
-        authwindow.h
-        authwindow.ui
+
+
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -26,8 +26,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         mainwindow.h mainwindow.cpp mainwindow.ui
         recordeditor.h recordeditor.cpp recordeditor.ui
         record.h record.cpp
-        initiator.h initiator.cpp
-        recordviewer.h recordviewer.cpp recordviewer.ui
+
+
+        encryptor.h encryptor.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET KeyLocker APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -48,6 +49,19 @@ else()
 endif()
 
 target_link_libraries(KeyLocker PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+if (WIN32)
+    set(OPENSSL_ROOT_DIR "C:/Qt/Tools/OpenSSLv3/Win_x64/lib")
+    set(OPENSSL_INCLUDE_DIR "C:/Qt/Tools/OpenSSLv3/Win_x64/include")
+    find_package(OpenSSL REQUIRED)
+elseif (UNIX)
+    include(FindOpenSSL)
+endif()
+
+target_link_libraries(
+KeyLocker # � ����� ���� ����������
+PRIVATE # � ����� ������ ����������
+${CMAKE_DL_LIBS} OpenSSL::SSL OpenSSL::Crypto) # ��� ������ ����������
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
