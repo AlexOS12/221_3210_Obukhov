@@ -11,7 +11,9 @@ bool MainWindow::readRecords()
         QByteArray fileContent = QByteArray::fromHex(file.readAll());
         qDebug() << fileContent;
         QByteArray decryptedFile;
-        Encryptor::getInstance().decrypt(fileContent, decryptedFile);
+        Encryptor::getInstance().decrypt(fileContent, decryptedFile,
+                                         QCryptographicHash::hash(currPin, QCryptographicHash::Sha256),
+                                         QCryptographicHash::hash(currPin, QCryptographicHash::Md5));
         qDebug() << "Decrypted:";
         qDebug() << decryptedFile;
         QJsonDocument jsonDoc;
@@ -30,6 +32,7 @@ bool MainWindow::readRecords()
     }
     displayRecords();
     file.close();
+    this->recordsRead = true;
     return true;
 }
 
@@ -50,29 +53,33 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ json
-    QJsonArray array;
-    for (Record record : records) {
-        array.push_back(record.toJson());
-    }
+    if (recordsRead) {
+        QJsonArray array;
+        for (Record record : records) {
+            array.push_back(record.toJson());
+        }
 
-    QJsonDocument jsonDoc(array);
+        QJsonDocument jsonDoc(array);
 
-    QFile file;
-    file.setFileName(homeDir + "/test.json");
+        QFile file;
+        file.setFileName(homeDir + "/test.json");
 
 
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        file.close();
-    } else {
-        QByteArray encryptedFile;
-        QByteArray json = jsonDoc.toJson(QJsonDocument::Compact);
-        qDebug() << json;
-        Encryptor::getInstance().encrypt(json, encryptedFile);
-        qDebug() << "Encrypted";
-        qDebug() << encryptedFile;
-        QTextStream out(&file);
-        out << encryptedFile.toHex();
-        file.close();
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            file.close();
+        } else {
+            QByteArray encryptedFile;
+            QByteArray json = jsonDoc.toJson(QJsonDocument::Compact);
+            qDebug() << json;
+            Encryptor::getInstance().encrypt(json, encryptedFile,
+                                             QCryptographicHash::hash(currPin, QCryptographicHash::Sha256),
+                                             QCryptographicHash::hash(currPin, QCryptographicHash::Md5));
+            qDebug() << "Encrypted";
+            qDebug() << encryptedFile;
+            QTextStream out(&file);
+            out << encryptedFile.toHex();
+            file.close();
+        }
     }
 
     delete ui;
@@ -129,6 +136,8 @@ void MainWindow::on_pinEdit_returnPressed()
         if (md5pin == pin) {
             ui->stackedWidget->setCurrentIndex(1);
             ui->wrongPassLbl->hide();
+            currPin = ui->pinEdit->text().toUtf8();
+            ui->pinEdit->setText("");
             readRecords();
         } else {
             ui->pinEdit->clear();
@@ -228,9 +237,14 @@ void MainWindow::on_newPinEdit_returnPressed()
             return;
         }
 
+        this->currPin = ui->newPinEdit->text().toUtf8();
         ui->changePinResult->show();
         ui->changePinResult->setText("Пин успешно изменён!");
         ui->changePinResult->setStyleSheet("color: rgb(0, 0, 0);");
+
+        ui->oldPinEdit->clear();
+        ui->newPinEdit->clear();
+        ui->confPinEdit->clear();
 
         QTextStream out(&newPinWriter);
         out << newMd5Pin.toHex();

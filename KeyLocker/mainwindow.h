@@ -53,6 +53,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QByteArray currPin;
+    bool recordsRead = false;
     void displayRecords();
     void showRecord(uint recordId);
     bool changePinMenuOpened = false;
