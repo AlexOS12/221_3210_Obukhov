@@ -47,3 +47,20 @@ QJsonObject Record::toJson()
 
     return json;
 }
+
+void Record::reEncryptCredentials(QByteArray oldKey, QByteArray oldIV, QByteArray newKey, QByteArray newIV)
+{
+    QByteArray newCredentials;
+    QByteArray decryptedCredits;
+
+    qDebug() << "reEncryptCredentials:";
+    qDebug() << this->credentials;
+    Encryptor::getInstance().decrypt(this->credentials, decryptedCredits, oldKey, oldIV);
+    qDebug() << decryptedCredits;
+    Encryptor::getInstance().encrypt(decryptedCredits, newCredentials, newKey, newIV);
+
+
+
+    this->credentials = newCredentials;
+    qDebug() << this->credentials;
+}

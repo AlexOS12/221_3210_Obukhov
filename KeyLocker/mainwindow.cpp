@@ -1,6 +1,18 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+void MainWindow::reEncryptRecords(QString oldPin, QString newPin)
+{
+    QByteArray oldPinSha256 = QCryptographicHash::hash(oldPin.toUtf8(), QCryptographicHash::Sha256);
+    QByteArray oldPinMd5 = QCryptographicHash::hash(oldPin.toUtf8(), QCryptographicHash::Md5);
+    QByteArray newPinSha256 = QCryptographicHash::hash(newPin.toUtf8(), QCryptographicHash::Sha256);
+    QByteArray newPinMd5 = QCryptographicHash::hash(newPin.toUtf8(), QCryptographicHash::Md5);
+
+    for (int i = 0; i < records.size(); i++) {
+        records[i].reEncryptCredentials(oldPinSha256, oldPinMd5, newPinSha256, newPinMd5);
+    }
+}
+
 bool MainWindow::readRecords()
 {
     QFile file;
@@ -150,8 +162,6 @@ void MainWindow::on_pinEdit_returnPressed()
         QByteArray pin = QByteArray::fromHex(pinContainer.readAll());
         QByteArray linePin = ui->pinEdit->text().toUtf8();
         QByteArray md5pin = QCryptographicHash::hash(linePin, QCryptographicHash::Md5);
-        qDebug() << md5pin;
-        qDebug() << pin;
         if (md5pin == pin) {
             ui->stackedWidget->setCurrentIndex(1);
             ui->wrongPassLbl->hide();
@@ -194,9 +204,10 @@ void MainWindow::on_changePinBtn_clicked()
     changePinMenuOpened = !changePinMenuOpened;
 }
 
-
 void MainWindow::on_newPinEdit_returnPressed()
 {
+    qDebug() << "pin change";
+    qDebug() << currPin;
     QFile pinContainer;
     pinContainer.setFileName(homeDir + "/pin.txt");
 
@@ -236,7 +247,11 @@ void MainWindow::on_newPinEdit_returnPressed()
             return;
         }
 
-        this->currPin = ui->newPinEdit->text().toUtf8();
+        qDebug() << this->currPin;
+        reEncryptRecords(QString(this->currPin), ui->newPinEdit->text());
+        this->currPin.clear();
+        this->currPin.append(ui->newPinEdit->text().toUtf8());
+        qDebug() << this->currPin;
         ui->resultLabel->show();
         ui->resultLabel->setText("Пин успешно изменён!");
         ui->resultLabel->setStyleSheet("color: rgb(0, 0, 0);");
@@ -293,6 +308,7 @@ void MainWindow::on_copyLoginBtn_clicked()
 
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(login);
+    qDebug() << login;
 }
 
 
@@ -304,5 +320,6 @@ void MainWindow::on_copyPassBtn_clicked()
 
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(pass);
+    qDebug() << pass;
 }
 

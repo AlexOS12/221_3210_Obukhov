@@ -21,6 +21,7 @@ public:
     QString getPass(QByteArray key, QByteArray iv);
     QString getLogin(QByteArray key, QByteArray iv);
     QJsonObject toJson();
+    void reEncryptCredentials(QByteArray oldKey, QByteArray oldIV, QByteArray newKey, QByteArray newIV);
 
 };
 

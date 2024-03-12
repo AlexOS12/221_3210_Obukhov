@@ -26,6 +26,7 @@ class MainWindow : public QWidget
 private:
     QString homeDir;
     QList<Record> records;
+    void reEncryptRecords(QString oldPin, QString newPin);
 
 public:
     bool readRecords();
