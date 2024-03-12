@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QDialog>
 #include <QCryptographicHash>
+#include <QClipboard>
 #include "encryptor.h"
 #include "record.h"
 #include "recordeditor.h"
@@ -41,10 +42,6 @@ private slots:
 
     void on_pinEdit_returnPressed();
 
-    void on_showLoginBtn_clicked();
-
-    void on_showPassBtn_clicked();
-
     void on_okBtn_clicked();
 
     void on_changePinBtn_clicked();
@@ -52,6 +49,10 @@ private slots:
     void on_newPinEdit_returnPressed();
 
     void on_addNewRecBtn_clicked();
+
+    void on_copyLoginBtn_clicked();
+
+    void on_copyPassBtn_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -62,6 +63,7 @@ private:
     bool changePinMenuOpened = false;
     bool addRecordMenuOpened = false;
     RecordEditor recordEditor;
+    uint selectedRecord = -1;
 };
 
 #endif // MAINWINDOW_H

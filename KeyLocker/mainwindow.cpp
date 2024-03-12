@@ -121,9 +121,12 @@ void MainWindow::displayRecords()
 
 void MainWindow::showRecord(uint recordId)
 {
+    this->selectedRecord = recordId;
     ui->siteView->setText(records[recordId].site);
-    ui->loginView->setText(records[recordId].getLogin(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256), QCryptographicHash::hash(currPin, QCryptographicHash::Md5)));
-    ui->passView->setText(records[recordId].getPass(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256), QCryptographicHash::hash(currPin, QCryptographicHash::Md5)));
+    ui->loginView->setText("********");
+    ui->passView->setText("********");
+    // ui->loginView->setText(records[recordId].getLogin(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256), QCryptographicHash::hash(currPin, QCryptographicHash::Md5)));
+    // ui->passView->setText(records[recordId].getPass(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256), QCryptographicHash::hash(currPin, QCryptographicHash::Md5)));
 }
 
 
@@ -160,26 +163,6 @@ void MainWindow::on_pinEdit_returnPressed()
             ui->wrongPassLbl->setText("Неверный пин-код");
             ui->wrongPassLbl->show();
         }
-    }
-}
-
-
-void MainWindow::on_showLoginBtn_clicked()
-{
-    if (ui->loginView->echoMode() == QLineEdit::Password) {
-        ui->loginView->setEchoMode(QLineEdit::Normal);
-    } else {
-        ui->loginView->setEchoMode(QLineEdit::Password);
-    }
-}
-
-
-void MainWindow::on_showPassBtn_clicked()
-{
-    if (ui->passView->echoMode() == QLineEdit::Password) {
-        ui->passView->setEchoMode(QLineEdit::Normal);
-    } else {
-        ui->passView->setEchoMode(QLineEdit::Password);
     }
 }
 
@@ -284,13 +267,9 @@ void MainWindow::on_addNewRecBtn_clicked()
     QByteArray qbaCredts, encCredits;
     qbaCredts = jdoc.toJson(QJsonDocument::Compact);
 
-    qDebug() << "on_addNewBtn_clicked:";
-    qDebug() << "qbaCredits: " << qbaCredts;
-
     Encryptor::getInstance().encrypt(qbaCredts, encCredits, QCryptographicHash::hash(currPin, QCryptographicHash::Sha256),
                                      QCryptographicHash::hash(currPin, QCryptographicHash::Md5));
 
-    qDebug() << "qbaCredits: " << qbaCredts;
     Record record(site, encCredits.toHex());
 
     this->records.push_back(record);
@@ -303,5 +282,27 @@ void MainWindow::on_addNewRecBtn_clicked()
     ui->newRecPass->clear();
     ui->newRecPass->hide();
     ui->addNewRecBtn->hide();
+}
+
+
+void MainWindow::on_copyLoginBtn_clicked()
+{
+    QString login;
+    login = records[selectedRecord].getLogin(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256),
+                                             QCryptographicHash::hash(currPin, QCryptographicHash::Md5));
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(login);
+}
+
+
+void MainWindow::on_copyPassBtn_clicked()
+{
+    QString pass;
+    pass = records[selectedRecord].getPass(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256),
+                                             QCryptographicHash::hash(currPin, QCryptographicHash::Md5));
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(pass);
 }
 

@@ -275,7 +275,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="showLoginBtn">
+                <widget class="QPushButton" name="copyLoginBtn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -294,8 +294,11 @@
                    <height>24</height>
                   </size>
                  </property>
+                 <property name="toolTip">
+                  <string>Скопировать логин</string>
+                 </property>
                  <property name="text">
-                  <string>👁</string>
+                  <string>📋</string>
                  </property>
                 </widget>
                </item>
@@ -323,7 +326,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="showPassBtn">
+                  <widget class="QPushButton" name="copyPassBtn">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -342,8 +345,11 @@
                      <height>24</height>
                     </size>
                    </property>
+                   <property name="toolTip">
+                    <string>Скопировать пароль</string>
+                   </property>
                    <property name="text">
-                    <string>👁</string>
+                    <string>📋</string>
                    </property>
                   </widget>
                  </item>
