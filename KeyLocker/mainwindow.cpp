@@ -4,8 +4,9 @@
 bool MainWindow::readRecords()
 {
     QFile file;
-    file.setFileName(homeDir + "/test.json");
+    file.setFileName(homeDir + "/data.txt");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        file.close();
         return false;
     } else {
         QByteArray fileContent = QByteArray::fromHex(file.readAll());
@@ -23,10 +24,9 @@ bool MainWindow::readRecords()
         for (int i = 0; i < jsonArray.size(); i++) {
             QJsonValue value = jsonArray.at(i);
             QString site = value["site"].toString();
-            QString login = value["login"].toString();
-            QString pass = value["pass"].toString();
+            QString credentials = value["credentials"].toString();
 
-            Record record(site, login, pass);
+            Record record(site, credentials);
             records.append(record);
         }
     }
@@ -62,8 +62,7 @@ MainWindow::~MainWindow()
         QJsonDocument jsonDoc(array);
 
         QFile file;
-        file.setFileName(homeDir + "/test.json");
-
+        file.setFileName(homeDir + "/data.txt");
 
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
             file.close();

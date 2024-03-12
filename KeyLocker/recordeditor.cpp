@@ -30,7 +30,13 @@ void RecordEditor::on_addBtn_clicked()
     QString login = ui->loginEdit->text();
     QString pass = ui->passEdit->text();
 
-    Record record(site, login, pass);
+    QJsonObject credentials;
+    credentials.insert("login", login);
+    credentials.insert("pass", pass);
+
+    QJsonDocument jdoc(credentials);
+
+    Record record(site, QString(jdoc.toJson(QJsonDocument::Compact)));
 
     clear();
 

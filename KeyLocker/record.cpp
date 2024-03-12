@@ -8,14 +8,24 @@ Record::Record(QString site, QString login, QString pass) {
     this->pass = pass;
 }
 
+Record::Record(QString site,QString credentials)
+{
+    this->site = site;
+    this->credentials = credentials;
+}
+
 QString Record::getPass()
 {
-    return this->pass;
+    QJsonDocument credits;
+    credits = QJsonDocument::fromJson(this->credentials.toUtf8());
+    return credits["pass"].toString();
 }
 
 QString Record::getLogin()
 {
-    return this->login;
+    QJsonDocument credits;
+    credits = QJsonDocument::fromJson(this->credentials.toUtf8());
+    return credits["login"].toString();
 }
 
 QJsonObject Record::toJson()
@@ -23,8 +33,7 @@ QJsonObject Record::toJson()
     QJsonObject json;
 
     json.insert("site", this->site);
-    json.insert("login", this->login);
-    json.insert("pass", this->pass);
+    json.insert("credentials", this->credentials);
 
     return json;
 }
