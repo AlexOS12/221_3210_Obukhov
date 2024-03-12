@@ -51,6 +51,8 @@ private slots:
 
     void on_newPinEdit_returnPressed();
 
+    void on_addNewRecBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
     QByteArray currPin;
@@ -58,6 +60,7 @@ private:
     void displayRecords();
     void showRecord(uint recordId);
     bool changePinMenuOpened = false;
+    bool addRecordMenuOpened = false;
     RecordEditor recordEditor;
 };
 

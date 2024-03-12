@@ -5,19 +5,21 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
+#include "encryptor.h"
+
 class Record
 {
 private:
     QString login;
     QString pass;
-    QString credentials;
+    QByteArray credentials;
 public:
     Record();
     Record(QString site, QString login, QString pass);
-    Record(QString site, QString credentials);
+    Record(QString site, QByteArray credentials);
     QString site;
-    QString getPass();
-    QString getLogin();
+    QString getPass(QByteArray key, QByteArray iv);
+    QString getLogin(QByteArray key, QByteArray iv);
     QJsonObject toJson();
 
 };

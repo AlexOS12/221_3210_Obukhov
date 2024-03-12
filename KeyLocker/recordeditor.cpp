@@ -36,7 +36,7 @@ void RecordEditor::on_addBtn_clicked()
 
     QJsonDocument jdoc(credentials);
 
-    Record record(site, QString(jdoc.toJson(QJsonDocument::Compact)));
+    Record record(site, QString(jdoc.toJson(QJsonDocument::Compact)).toUtf8());
 
     clear();
 

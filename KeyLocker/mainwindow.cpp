@@ -24,7 +24,7 @@ bool MainWindow::readRecords()
         for (int i = 0; i < jsonArray.size(); i++) {
             QJsonValue value = jsonArray.at(i);
             QString site = value["site"].toString();
-            QString credentials = value["credentials"].toString();
+            QByteArray credentials = value["credentials"].toString().toUtf8();
 
             Record record(site, credentials);
             records.append(record);
@@ -42,10 +42,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->wrongPassLbl->hide();
-    ui->changePinResult->hide();
+    ui->resultLabel->hide();
     ui->oldPinEdit->hide();
     ui->newPinEdit->hide();
     ui->confPinEdit->hide();
+    ui->newRecSite->hide();
+    ui->newRecLogin->hide();
+    ui->newRecPass->hide();
+    ui->addNewRecBtn->hide();
     homeDir = QDir::homePath() + "/KeyLocker";
     QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
 }
@@ -92,7 +96,20 @@ void MainWindow::addRecord(Record record)
 
 void MainWindow::on_addRecord_clicked()
 {
-    recordEditor.show();
+    // recordEditor.show();
+    this->addRecordMenuOpened = !this->addRecordMenuOpened;
+
+    if (this->addRecordMenuOpened) {
+        ui->newRecSite->show();
+        ui->newRecLogin->show();
+        ui->newRecPass->show();
+        ui->addNewRecBtn->show();
+    } else {
+        ui->newRecSite->hide();
+        ui->newRecLogin->hide();
+        ui->newRecPass->hide();
+        ui->addNewRecBtn->hide();
+    }
 }
 
 void MainWindow::displayRecords()
@@ -105,8 +122,8 @@ void MainWindow::displayRecords()
 void MainWindow::showRecord(uint recordId)
 {
     ui->siteView->setText(records[recordId].site);
-    ui->loginView->setText(records[recordId].getLogin());
-    ui->passView->setText(records[recordId].getPass());
+    ui->loginView->setText(records[recordId].getLogin(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256), QCryptographicHash::hash(currPin, QCryptographicHash::Md5)));
+    ui->passView->setText(records[recordId].getPass(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256), QCryptographicHash::hash(currPin, QCryptographicHash::Md5)));
 }
 
 
@@ -184,12 +201,12 @@ void MainWindow::on_changePinBtn_clicked()
         ui->newPinEdit->hide();
         ui->oldPinEdit->hide();
         ui->confPinEdit->hide();
-        ui->changePinResult->hide();
+        ui->resultLabel->hide();
     } else {
         ui->newPinEdit->show();
         ui->oldPinEdit->show();
         ui->confPinEdit->show();
-        ui->changePinResult->hide();
+        ui->resultLabel->hide();
     }
     changePinMenuOpened = !changePinMenuOpened;
 }
@@ -201,27 +218,27 @@ void MainWindow::on_newPinEdit_returnPressed()
     pinContainer.setFileName(homeDir + "/pin.txt");
 
     if (!pinContainer.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        ui->changePinResult->show();
-        ui->changePinResult->setText("Не удалось открыть файл с пином");
+        ui->resultLabel->show();
+        ui->resultLabel->setText("Не удалось открыть файл с пином");
         qDebug() << "Failed to open pin file";
-        ui->changePinResult->setStyleSheet("color: rgb(255, 0, 0);");
+        ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
     } else {
         QByteArray currPin = QByteArray::fromHex(pinContainer.readAll());
         pinContainer.close();
         QByteArray oldPin = ui->oldPinEdit->text().toUtf8();
         QByteArray oldMd5Pin = QCryptographicHash::hash(oldPin, QCryptographicHash::Md5);
         if (oldMd5Pin != currPin) {
-            ui->changePinResult->show();
-            ui->changePinResult->setText("Введен неверный старый пин!");
+            ui->resultLabel->show();
+            ui->resultLabel->setText("Введен неверный старый пин!");
             qDebug() << "Old pin is wrong";
-            ui->changePinResult->setStyleSheet("color: rgb(255, 0, 0);");
+            ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
             return;
         }
         if (ui->newPinEdit->text() != ui->confPinEdit->text()) {
-            ui->changePinResult->show();
-            ui->changePinResult->setText("Новые пины различаются!");
+            ui->resultLabel->show();
+            ui->resultLabel->setText("Новые пины различаются!");
             qDebug() << "New pins a different";
-            ui->changePinResult->setStyleSheet("color: rgb(255, 0, 0);");
+            ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
             return;
         }
 
@@ -230,16 +247,16 @@ void MainWindow::on_newPinEdit_returnPressed()
         newPinWriter.setFileName(homeDir + "/pin.txt");
 
         if (!newPinWriter.open(QIODevice::ReadWrite | QIODevice::Text)) {
-            ui->changePinResult->show();
-            ui->changePinResult->setText("Не удалось сохранить новый пин!");
-            ui->changePinResult->setStyleSheet("color: rgb(255, 0, 0);");
+            ui->resultLabel->show();
+            ui->resultLabel->setText("Не удалось сохранить новый пин!");
+            ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
             return;
         }
 
         this->currPin = ui->newPinEdit->text().toUtf8();
-        ui->changePinResult->show();
-        ui->changePinResult->setText("Пин успешно изменён!");
-        ui->changePinResult->setStyleSheet("color: rgb(0, 0, 0);");
+        ui->resultLabel->show();
+        ui->resultLabel->setText("Пин успешно изменён!");
+        ui->resultLabel->setStyleSheet("color: rgb(0, 0, 0);");
 
         ui->oldPinEdit->clear();
         ui->newPinEdit->clear();
@@ -249,5 +266,42 @@ void MainWindow::on_newPinEdit_returnPressed()
         out << newMd5Pin.toHex();
         newPinWriter.close();
     }
+}
+
+
+void MainWindow::on_addNewRecBtn_clicked()
+{
+    QString site = ui->newRecSite->text();
+    QString login = ui->newRecLogin->text();
+    QString pass = ui->newRecPass->text();
+
+    QJsonObject credits;
+    credits.insert("login", login);
+    credits.insert("pass", pass);
+
+    QJsonDocument jdoc(credits);
+
+    QByteArray qbaCredts, encCredits;
+    qbaCredts = jdoc.toJson(QJsonDocument::Compact);
+
+    qDebug() << "on_addNewBtn_clicked:";
+    qDebug() << "qbaCredits: " << qbaCredts;
+
+    Encryptor::getInstance().encrypt(qbaCredts, encCredits, QCryptographicHash::hash(currPin, QCryptographicHash::Sha256),
+                                     QCryptographicHash::hash(currPin, QCryptographicHash::Md5));
+
+    qDebug() << "qbaCredits: " << qbaCredts;
+    Record record(site, encCredits.toHex());
+
+    this->records.push_back(record);
+    ui->listWidget->addItem(record.site);
+
+    ui->newRecSite->clear();
+    ui->newRecSite->hide();
+    ui->newRecLogin->clear();
+    ui->newRecLogin->hide();
+    ui->newRecPass->clear();
+    ui->newRecPass->hide();
+    ui->addNewRecBtn->hide();
 }
 
