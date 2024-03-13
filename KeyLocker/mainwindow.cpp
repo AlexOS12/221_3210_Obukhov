@@ -190,6 +190,12 @@ void MainWindow::copyRecordLogin(int recordId)
     qDebug() << login;
 }
 
+void MainWindow::deleteRecord(int recordId)
+{
+    this->records.remove(recordId);
+    this->displayRecords();
+}
+
 void MainWindow::on_addRecord_clicked()
 {
     this->addRecordMenuOpened = !this->addRecordMenuOpened;
@@ -226,8 +232,8 @@ void MainWindow::displayRecords()
 
             QObject::connect(recordwidget, SIGNAL(copyRecordLogin(int)), this, SLOT(copyRecordLogin(int)));
             QObject::connect(recordwidget, SIGNAL(copyRecordPass(int)), this, SLOT(copyRecordPass(int)));
+            QObject::connect(recordwidget, SIGNAL(deleteRecord(int)), this, SLOT(deleteRecord(int)));
 
-            qDebug() << i;
             ui->listWidget->addItem(item);
             ui->listWidget->setItemWidget(item, recordwidget);
         }
@@ -387,7 +393,6 @@ void MainWindow::on_changeBtn_clicked()
 void MainWindow::on_searchLine_textEdited(const QString &arg1)
 {
 
-    qDebug() << "filter";
     displayRecords();
 }
 

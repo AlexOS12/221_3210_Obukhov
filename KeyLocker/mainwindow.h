@@ -38,6 +38,7 @@ public:
 public slots:
     void copyRecordPass(int recordId);
     void copyRecordLogin(int recordId);
+    void deleteRecord(int recordId);
 
 private slots:
     void on_addRecord_clicked();
