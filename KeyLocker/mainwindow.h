@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QDialog>
 #include <QCryptographicHash>
+#include <QClipboard>
 #include "encryptor.h"
 #include "record.h"
 #include "recordeditor.h"
@@ -25,6 +26,7 @@ class MainWindow : public QWidget
 private:
     QString homeDir;
     QList<Record> records;
+    void reEncryptRecords(QString oldPin, QString newPin);
 
 public:
     bool readRecords();
@@ -41,15 +43,17 @@ private slots:
 
     void on_pinEdit_returnPressed();
 
-    void on_showLoginBtn_clicked();
-
-    void on_showPassBtn_clicked();
-
     void on_okBtn_clicked();
 
     void on_changePinBtn_clicked();
 
     void on_newPinEdit_returnPressed();
+
+    void on_addNewRecBtn_clicked();
+
+    void on_copyLoginBtn_clicked();
+
+    void on_copyPassBtn_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -58,7 +62,9 @@ private:
     void displayRecords();
     void showRecord(uint recordId);
     bool changePinMenuOpened = false;
+    bool addRecordMenuOpened = false;
     RecordEditor recordEditor;
+    uint selectedRecord = -1;
 };
 
 #endif // MAINWINDOW_H

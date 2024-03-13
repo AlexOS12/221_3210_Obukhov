@@ -43,7 +43,6 @@ int Encryptor::encrypt(QByteArray &in, QByteArray &out, QByteArray QBAkey, QByte
 
 int Encryptor::decrypt(QByteArray &in, QByteArray &out, QByteArray QBAkey, QByteArray QBAiv)
 {
-    qDebug() << "Key: " + QBAkey;
     unsigned char key[32], iv[16];
     const int buffLen = 256;
     unsigned char encBuffer[buffLen] = {0},
