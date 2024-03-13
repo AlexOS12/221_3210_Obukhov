@@ -24,7 +24,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         mainwindow.h mainwindow.cpp mainwindow.ui
-        recordeditor.h recordeditor.cpp recordeditor.ui
+
         record.h record.cpp
 
 

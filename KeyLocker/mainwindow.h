@@ -14,7 +14,6 @@
 #include <QClipboard>
 #include "encryptor.h"
 #include "record.h"
-#include "recordeditor.h"
 
 namespace Ui {
 class MainWindow;
@@ -34,9 +33,6 @@ public:
     bool readRecords();
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
-public slots:
-    void addRecord(Record record);
 
 private slots:
     void on_addRecord_clicked();
@@ -67,7 +63,6 @@ private:
     void showRecord(uint recordId);
     bool changePinMenuOpened = false;
     bool addRecordMenuOpened = false;
-    RecordEditor recordEditor;
     uint selectedRecord = -1;
 };
 

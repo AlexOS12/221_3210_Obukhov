@@ -22,7 +22,7 @@ void MainWindow::changePin()
 
     if (!pinContainer.open(QIODevice::ReadOnly | QIODevice::Text)) {
         ui->resultLabel->show();
-        ui->resultLabel->setText("Не удалось открыть файл с пином");
+        ui->resultLabel->setText("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р» СЃ РїРёРЅРѕРј");
         qDebug() << "Failed to open pin file";
         ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
     } else {
@@ -32,14 +32,14 @@ void MainWindow::changePin()
         QByteArray oldMd5Pin = QCryptographicHash::hash(oldPin, QCryptographicHash::Md5);
         if (oldMd5Pin != currPin) {
             ui->resultLabel->show();
-            ui->resultLabel->setText("Введен неверный старый пин!");
+            ui->resultLabel->setText("Р’РІРµРґРµРЅ РЅРµРІРµСЂРЅС‹Р№ С‚РµРєСѓС‰РёР№ РїРёРЅ!");
             qDebug() << "Old pin is wrong";
             ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
             return;
         }
         if (ui->newPinEdit->text() != ui->confPinEdit->text()) {
             ui->resultLabel->show();
-            ui->resultLabel->setText("Новые пины различаются!");
+            ui->resultLabel->setText("РќРѕРІС‹Рµ РїРёРЅС‹ СЂР°Р·Р»РёС‡Р°СЋС‚СЃСЏ!");
             qDebug() << "New pins a different";
             ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
             return;
@@ -51,7 +51,7 @@ void MainWindow::changePin()
 
         if (!newPinWriter.open(QIODevice::ReadWrite | QIODevice::Text)) {
             ui->resultLabel->show();
-            ui->resultLabel->setText("Не удалось сохранить новый пин!");
+            ui->resultLabel->setText("РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ РЅРѕРІС‹Р№ РїРёРЅ!");
             ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
             return;
         }
@@ -62,7 +62,7 @@ void MainWindow::changePin()
         this->currPin.append(ui->newPinEdit->text().toUtf8());
         qDebug() << this->currPin;
         ui->resultLabel->show();
-        ui->resultLabel->setText("Пин успешно изменён!");
+        ui->resultLabel->setText("РџРёРЅ СѓСЃРїРµС€РЅРѕ РёР·РјРµРЅРµРЅ!");
         ui->resultLabel->setStyleSheet("color: rgb(0, 0, 0);");
 
         ui->oldPinEdit->clear();
@@ -133,12 +133,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->newRecPass->hide();
     ui->addNewRecBtn->hide();
     homeDir = QDir::homePath() + "/KeyLocker";
-    QObject::connect(&recordEditor, SIGNAL(sendRecord(Record)), this, SLOT(addRecord(Record)));
 }
 
 MainWindow::~MainWindow()
 {
-    // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ json
     if (recordsRead) {
         QJsonArray array;
         for (Record record : records) {
@@ -170,15 +168,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::addRecord(Record record)
-{
-    records.push_back(record);
-    ui->listWidget->addItem(record.site);
-}
-
 void MainWindow::on_addRecord_clicked()
 {
-    // recordEditor.show();
     this->addRecordMenuOpened = !this->addRecordMenuOpened;
 
     if (this->addRecordMenuOpened) {
