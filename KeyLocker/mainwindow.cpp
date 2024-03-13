@@ -111,9 +111,9 @@ bool MainWindow::readRecords()
             records.append(record);
         }
     }
-    displayRecords();
     file.close();
     this->recordsRead = true;
+    displayRecords();
     return true;
 }
 
@@ -207,18 +207,30 @@ void MainWindow::on_addRecord_clicked()
     }
 }
 
+
+
 void MainWindow::displayRecords()
 {
+    QString searchFor = ui->searchLine->text();
+
+    ui->listWidget->clear();
+
     for (int i = 0; i < this->records.size(); i++) {
-        QListWidgetItem* item = new QListWidgetItem();
+        if (searchFor.isEmpty() || this->records[i].site.contains(searchFor)) {
+            qDebug() << i;
 
-        recordWiget* recordwidget = new recordWiget(ui->listWidget, i, records[i].site);
-        QObject::connect(recordwidget, SIGNAL(copyRecordLogin(int)), this, SLOT(copyRecordLogin(int)));
-        QObject::connect(recordwidget, SIGNAL(copyRecordPass(int)), this, SLOT(copyRecordPass(int)));
+            QListWidgetItem* item = new QListWidgetItem();
+            item->setSizeHint({500, 102});
 
-        item->setSizeHint({500, 102});
-        ui->listWidget->addItem(item);
-        ui->listWidget->setItemWidget(item, recordwidget);
+            recordWiget* recordwidget = new recordWiget(ui->listWidget, i, records[i].site);
+
+            QObject::connect(recordwidget, SIGNAL(copyRecordLogin(int)), this, SLOT(copyRecordLogin(int)));
+            QObject::connect(recordwidget, SIGNAL(copyRecordPass(int)), this, SLOT(copyRecordPass(int)));
+
+            qDebug() << i;
+            ui->listWidget->addItem(item);
+            ui->listWidget->setItemWidget(item, recordwidget);
+        }
     }
 }
 
@@ -229,6 +241,7 @@ void MainWindow::showRecord(uint recordId)
     ui->loginView->setText("********");
     ui->passView->setText("********");
 }
+
 
 
 void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
@@ -369,4 +382,14 @@ void MainWindow::on_changeBtn_clicked()
 {
     changePin();
 }
+
+
+void MainWindow::on_searchLine_textEdited(const QString &arg1)
+{
+
+    qDebug() << "filter";
+    displayRecords();
+}
+
+
 

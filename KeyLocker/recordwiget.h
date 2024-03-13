@@ -14,6 +14,7 @@ class recordWiget : public QWidget
     int recordId = -1;
 
 public:
+    QString site;
     explicit recordWiget(QWidget *parent = nullptr, int recordId = -1, QString site = "");
     ~recordWiget();
 

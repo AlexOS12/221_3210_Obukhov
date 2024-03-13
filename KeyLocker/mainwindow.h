@@ -25,6 +25,7 @@ class MainWindow : public QWidget
 private:
     QString homeDir;
     QList<Record> records;
+    QList<recordWiget*> recordWidgets;
     void reEncryptRecords(QString oldPin, QString newPin);
 
     void changePin();
@@ -58,6 +59,8 @@ private slots:
     void on_copyPassBtn_clicked();
 
     void on_changeBtn_clicked();
+
+    void on_searchLine_textEdited(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;

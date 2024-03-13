@@ -80,7 +80,7 @@
           </size>
          </property>
          <property name="styleSheet">
-          <string>0</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>📋</string>

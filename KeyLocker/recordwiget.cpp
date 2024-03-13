@@ -8,6 +8,7 @@ recordWiget::recordWiget(QWidget *parent, int recordId, QString site)
     ui->setupUi(this);
     ui->siteLabel->setText(site);
     this->recordId = recordId;
+    this->site = site;
 }
 
 recordWiget::~recordWiget()
