@@ -29,6 +29,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
 
         encryptor.h encryptor.cpp
+        recordwiget.h recordwiget.cpp recordwiget.ui
+
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET KeyLocker APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

@@ -168,6 +168,28 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::copyRecordPass(int recordId)
+{
+    QString pass;
+    pass = records[recordId].getPass(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256),
+                                             QCryptographicHash::hash(currPin, QCryptographicHash::Md5));
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(pass);
+    qDebug() << pass;
+}
+
+void MainWindow::copyRecordLogin(int recordId)
+{
+    QString login;
+    login = records[recordId].getLogin(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256),
+                                             QCryptographicHash::hash(currPin, QCryptographicHash::Md5));
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(login);
+    qDebug() << login;
+}
+
 void MainWindow::on_addRecord_clicked()
 {
     this->addRecordMenuOpened = !this->addRecordMenuOpened;
@@ -187,8 +209,16 @@ void MainWindow::on_addRecord_clicked()
 
 void MainWindow::displayRecords()
 {
-    for (Record record : records) {
-        ui->listWidget->addItem(record.site);
+    for (int i = 0; i < this->records.size(); i++) {
+        QListWidgetItem* item = new QListWidgetItem();
+
+        recordWiget* recordwidget = new recordWiget(ui->listWidget, i, records[i].site);
+        QObject::connect(recordwidget, SIGNAL(copyRecordLogin(int)), this, SLOT(copyRecordLogin(int)));
+        QObject::connect(recordwidget, SIGNAL(copyRecordPass(int)), this, SLOT(copyRecordPass(int)));
+
+        item->setSizeHint({500, 102});
+        ui->listWidget->addItem(item);
+        ui->listWidget->setItemWidget(item, recordwidget);
     }
 }
 
@@ -203,9 +233,6 @@ void MainWindow::showRecord(uint recordId)
 
 void MainWindow::on_listWidget_doubleClicked(const QModelIndex &index)
 {
-    uint recordId = ui->listWidget->currentRow();
-    ui->stackedWidget->setCurrentIndex(2);
-    showRecord(recordId);
 }
 
 
@@ -294,7 +321,16 @@ void MainWindow::on_addNewRecBtn_clicked()
     Record record(site, encCredits.toHex());
 
     this->records.push_back(record);
-    ui->listWidget->addItem(record.site);
+
+    QListWidgetItem* item = new QListWidgetItem();
+
+    recordWiget* recordwidget = new recordWiget(ui->listWidget, records.size() - 1, site);
+    QObject::connect(recordwidget, SIGNAL(copyRecordLogin(int)), this, SLOT(copyRecordLogin(int)));
+    QObject::connect(recordwidget, SIGNAL(copyRecordPass(int)), this, SLOT(copyRecordPass(int)));
+
+    item->setSizeHint({500, 102});
+    ui->listWidget->addItem(item);
+    ui->listWidget->setItemWidget(item, recordwidget);
 
     ui->newRecSite->clear();
     ui->newRecSite->hide();

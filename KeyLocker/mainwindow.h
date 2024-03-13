@@ -1,9 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#define PIN "1234"
-
 #include <QWidget>
+#include <QListWidgetItem>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -14,6 +13,7 @@
 #include <QClipboard>
 #include "encryptor.h"
 #include "record.h"
+#include "recordwiget.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +33,10 @@ public:
     bool readRecords();
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+public slots:
+    void copyRecordPass(int recordId);
+    void copyRecordLogin(int recordId);
 
 private slots:
     void on_addRecord_clicked();
