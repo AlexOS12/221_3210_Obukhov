@@ -28,6 +28,8 @@ private:
     QList<Record> records;
     void reEncryptRecords(QString oldPin, QString newPin);
 
+    void changePin();
+
 public:
     bool readRecords();
     explicit MainWindow(QWidget *parent = nullptr);
@@ -54,6 +56,8 @@ private slots:
     void on_copyLoginBtn_clicked();
 
     void on_copyPassBtn_clicked();
+
+    void on_changeBtn_clicked();
 
 private:
     Ui::MainWindow *ui;

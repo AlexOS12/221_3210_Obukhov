@@ -13,6 +13,75 @@ void MainWindow::reEncryptRecords(QString oldPin, QString newPin)
     }
 }
 
+void MainWindow::changePin()
+{
+    qDebug() << "pin change";
+    qDebug() << currPin;
+    QFile pinContainer;
+    pinContainer.setFileName(homeDir + "/pin.txt");
+
+    if (!pinContainer.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        ui->resultLabel->show();
+        ui->resultLabel->setText("Не удалось открыть файл с пином");
+        qDebug() << "Failed to open pin file";
+        ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
+    } else {
+        QByteArray currPin = QByteArray::fromHex(pinContainer.readAll());
+        pinContainer.close();
+        QByteArray oldPin = ui->oldPinEdit->text().toUtf8();
+        QByteArray oldMd5Pin = QCryptographicHash::hash(oldPin, QCryptographicHash::Md5);
+        if (oldMd5Pin != currPin) {
+            ui->resultLabel->show();
+            ui->resultLabel->setText("Введен неверный старый пин!");
+            qDebug() << "Old pin is wrong";
+            ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
+            return;
+        }
+        if (ui->newPinEdit->text() != ui->confPinEdit->text()) {
+            ui->resultLabel->show();
+            ui->resultLabel->setText("Новые пины различаются!");
+            qDebug() << "New pins a different";
+            ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
+            return;
+        }
+
+        QByteArray newMd5Pin = QCryptographicHash::hash(ui->newPinEdit->text().toUtf8(), QCryptographicHash::Md5);
+        QFile newPinWriter;
+        newPinWriter.setFileName(homeDir + "/pin.txt");
+
+        if (!newPinWriter.open(QIODevice::ReadWrite | QIODevice::Text)) {
+            ui->resultLabel->show();
+            ui->resultLabel->setText("Не удалось сохранить новый пин!");
+            ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
+            return;
+        }
+
+        qDebug() << this->currPin;
+        reEncryptRecords(QString(this->currPin), ui->newPinEdit->text());
+        this->currPin.clear();
+        this->currPin.append(ui->newPinEdit->text().toUtf8());
+        qDebug() << this->currPin;
+        ui->resultLabel->show();
+        ui->resultLabel->setText("Пин успешно изменён!");
+        ui->resultLabel->setStyleSheet("color: rgb(0, 0, 0);");
+
+        ui->oldPinEdit->clear();
+        ui->newPinEdit->clear();
+        ui->confPinEdit->clear();
+
+        ui->oldPinEdit->hide();
+        ui->newPinEdit->hide();
+        ui->confPinEdit->hide();
+        ui->changeBtn->hide();
+
+        this->changePinMenuOpened = false;
+
+        QTextStream out(&newPinWriter);
+        out << newMd5Pin.toHex();
+        newPinWriter.close();
+    }
+}
+
 bool MainWindow::readRecords()
 {
     QFile file;
@@ -57,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->resultLabel->hide();
     ui->oldPinEdit->hide();
     ui->newPinEdit->hide();
+    ui->changeBtn->hide();
     ui->confPinEdit->hide();
     ui->newRecSite->hide();
     ui->newRecLogin->hide();
@@ -137,8 +207,6 @@ void MainWindow::showRecord(uint recordId)
     ui->siteView->setText(records[recordId].site);
     ui->loginView->setText("********");
     ui->passView->setText("********");
-    // ui->loginView->setText(records[recordId].getLogin(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256), QCryptographicHash::hash(currPin, QCryptographicHash::Md5)));
-    // ui->passView->setText(records[recordId].getPass(QCryptographicHash::hash(currPin, QCryptographicHash::Sha256), QCryptographicHash::hash(currPin, QCryptographicHash::Md5)));
 }
 
 
@@ -195,75 +263,22 @@ void MainWindow::on_changePinBtn_clicked()
         ui->oldPinEdit->hide();
         ui->confPinEdit->hide();
         ui->resultLabel->hide();
+        ui->changeBtn->hide();
     } else {
         ui->newPinEdit->show();
         ui->oldPinEdit->show();
         ui->confPinEdit->show();
+        ui->changeBtn->show();
         ui->resultLabel->hide();
     }
     changePinMenuOpened = !changePinMenuOpened;
 }
 
+
+
 void MainWindow::on_newPinEdit_returnPressed()
 {
-    qDebug() << "pin change";
-    qDebug() << currPin;
-    QFile pinContainer;
-    pinContainer.setFileName(homeDir + "/pin.txt");
-
-    if (!pinContainer.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        ui->resultLabel->show();
-        ui->resultLabel->setText("Не удалось открыть файл с пином");
-        qDebug() << "Failed to open pin file";
-        ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
-    } else {
-        QByteArray currPin = QByteArray::fromHex(pinContainer.readAll());
-        pinContainer.close();
-        QByteArray oldPin = ui->oldPinEdit->text().toUtf8();
-        QByteArray oldMd5Pin = QCryptographicHash::hash(oldPin, QCryptographicHash::Md5);
-        if (oldMd5Pin != currPin) {
-            ui->resultLabel->show();
-            ui->resultLabel->setText("Введен неверный старый пин!");
-            qDebug() << "Old pin is wrong";
-            ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
-            return;
-        }
-        if (ui->newPinEdit->text() != ui->confPinEdit->text()) {
-            ui->resultLabel->show();
-            ui->resultLabel->setText("Новые пины различаются!");
-            qDebug() << "New pins a different";
-            ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
-            return;
-        }
-
-        QByteArray newMd5Pin = QCryptographicHash::hash(ui->newPinEdit->text().toUtf8(), QCryptographicHash::Md5);
-        QFile newPinWriter;
-        newPinWriter.setFileName(homeDir + "/pin.txt");
-
-        if (!newPinWriter.open(QIODevice::ReadWrite | QIODevice::Text)) {
-            ui->resultLabel->show();
-            ui->resultLabel->setText("Не удалось сохранить новый пин!");
-            ui->resultLabel->setStyleSheet("color: rgb(255, 0, 0);");
-            return;
-        }
-
-        qDebug() << this->currPin;
-        reEncryptRecords(QString(this->currPin), ui->newPinEdit->text());
-        this->currPin.clear();
-        this->currPin.append(ui->newPinEdit->text().toUtf8());
-        qDebug() << this->currPin;
-        ui->resultLabel->show();
-        ui->resultLabel->setText("Пин успешно изменён!");
-        ui->resultLabel->setStyleSheet("color: rgb(0, 0, 0);");
-
-        ui->oldPinEdit->clear();
-        ui->newPinEdit->clear();
-        ui->confPinEdit->clear();
-
-        QTextStream out(&newPinWriter);
-        out << newMd5Pin.toHex();
-        newPinWriter.close();
-    }
+    changePin();
 }
 
 
@@ -321,5 +336,10 @@ void MainWindow::on_copyPassBtn_clicked()
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(pass);
     qDebug() << pass;
+}
+
+void MainWindow::on_changeBtn_clicked()
+{
+    changePin();
 }
 

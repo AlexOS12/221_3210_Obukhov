@@ -83,6 +83,9 @@
            <property name="echoMode">
             <enum>QLineEdit::Password</enum>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
            <property name="placeholderText">
             <string>Введите пин-код</string>
            </property>
@@ -94,7 +97,7 @@
             <string notr="true">color: rgb(255, 0, 0);</string>
            </property>
            <property name="text">
-            <string>Неверный пароль!</string>
+            <string>Неверный пин-код!</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -161,6 +164,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
             <widget class="QLineEdit" name="oldPinEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
              <property name="placeholderText">
               <string>Введите старый пин</string>
              </property>
@@ -168,6 +174,9 @@
            </item>
            <item>
             <widget class="QLineEdit" name="confPinEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
              <property name="placeholderText">
               <string>Введите новый пин</string>
              </property>
@@ -175,8 +184,18 @@
            </item>
            <item>
             <widget class="QLineEdit" name="newPinEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
              <property name="placeholderText">
               <string>Введите новый пин снова</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="changeBtn">
+             <property name="text">
+              <string>Сменить</string>
              </property>
             </widget>
            </item>
@@ -187,7 +206,11 @@
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLineEdit" name="searchLine"/>
+          <widget class="QLineEdit" name="searchLine">
+           <property name="placeholderText">
+            <string>Найти запись...</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="addRecord">
