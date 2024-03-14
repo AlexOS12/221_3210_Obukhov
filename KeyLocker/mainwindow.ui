@@ -83,6 +83,9 @@
            <property name="echoMode">
             <enum>QLineEdit::Password</enum>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
            <property name="placeholderText">
             <string>Введите пин-код</string>
            </property>
@@ -94,7 +97,7 @@
             <string notr="true">color: rgb(255, 0, 0);</string>
            </property>
            <property name="text">
-            <string>Неверный пароль!</string>
+            <string>Неверный пин-код!</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -107,10 +110,107 @@
      </widget>
      <widget class="QWidget" name="page_2">
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="2" column="0">
+        <widget class="QListWidget" name="listWidget"/>
+       </item>
+       <item row="1" column="0">
+        <layout class="QGridLayout" name="changePinLayout">
+         <item row="2" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLineEdit" name="newRecSite">
+             <property name="placeholderText">
+              <string>Введите название записи</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="newRecLogin">
+             <property name="placeholderText">
+              <string>Введите логин</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="newRecPass">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+             <property name="placeholderText">
+              <string>Введите пароль</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addNewRecBtn">
+             <property name="text">
+              <string>Добавить</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="resultLabel">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLineEdit" name="oldPinEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+             <property name="placeholderText">
+              <string>Введите старый пин</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="confPinEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+             <property name="placeholderText">
+              <string>Введите новый пин</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="newPinEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+             <property name="placeholderText">
+              <string>Введите новый пин снова</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="changeBtn">
+             <property name="text">
+              <string>Сменить</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLineEdit" name="searchLine"/>
+          <widget class="QLineEdit" name="searchLine">
+           <property name="placeholderText">
+            <string>Найти запись...</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="addRecord">
@@ -119,10 +219,14 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="changePinBtn">
+           <property name="text">
+            <string>Сменить PIN</string>
+           </property>
+          </widget>
+         </item>
         </layout>
-       </item>
-       <item row="1" column="0">
-        <widget class="QListWidget" name="listWidget"/>
        </item>
       </layout>
      </widget>
@@ -194,7 +298,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="showLoginBtn">
+                <widget class="QPushButton" name="copyLoginBtn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -213,8 +317,11 @@
                    <height>24</height>
                   </size>
                  </property>
+                 <property name="toolTip">
+                  <string>Скопировать логин</string>
+                 </property>
                  <property name="text">
-                  <string>👁</string>
+                  <string>📋</string>
                  </property>
                 </widget>
                </item>
@@ -242,7 +349,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="showPassBtn">
+                  <widget class="QPushButton" name="copyPassBtn">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -261,8 +368,11 @@
                      <height>24</height>
                     </size>
                    </property>
+                   <property name="toolTip">
+                    <string>Скопировать пароль</string>
+                   </property>
                    <property name="text">
-                    <string>👁</string>
+                    <string>📋</string>
                    </property>
                   </widget>
                  </item>
