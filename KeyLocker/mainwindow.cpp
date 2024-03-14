@@ -190,6 +190,12 @@ void MainWindow::copyRecordLogin(int recordId)
     qDebug() << login;
 }
 
+void MainWindow::deleteRecord(int recordId)
+{
+    this->records.remove(recordId);
+    this->displayRecords();
+}
+
 void MainWindow::on_addRecord_clicked()
 {
     this->addRecordMenuOpened = !this->addRecordMenuOpened;
@@ -220,14 +226,15 @@ void MainWindow::displayRecords()
             qDebug() << i;
 
             QListWidgetItem* item = new QListWidgetItem();
-            item->setSizeHint({500, 102});
 
             recordWiget* recordwidget = new recordWiget(ui->listWidget, i, records[i].site);
 
+            item->setSizeHint(recordwidget->size());
+
             QObject::connect(recordwidget, SIGNAL(copyRecordLogin(int)), this, SLOT(copyRecordLogin(int)));
             QObject::connect(recordwidget, SIGNAL(copyRecordPass(int)), this, SLOT(copyRecordPass(int)));
+            QObject::connect(recordwidget, SIGNAL(deleteRecord(int)), this, SLOT(deleteRecord(int)));
 
-            qDebug() << i;
             ui->listWidget->addItem(item);
             ui->listWidget->setItemWidget(item, recordwidget);
         }
@@ -341,7 +348,7 @@ void MainWindow::on_addNewRecBtn_clicked()
     QObject::connect(recordwidget, SIGNAL(copyRecordLogin(int)), this, SLOT(copyRecordLogin(int)));
     QObject::connect(recordwidget, SIGNAL(copyRecordPass(int)), this, SLOT(copyRecordPass(int)));
 
-    item->setSizeHint({500, 102});
+    item->setSizeHint(recordwidget->size());
     ui->listWidget->addItem(item);
     ui->listWidget->setItemWidget(item, recordwidget);
 
@@ -352,6 +359,8 @@ void MainWindow::on_addNewRecBtn_clicked()
     ui->newRecPass->clear();
     ui->newRecPass->hide();
     ui->addNewRecBtn->hide();
+
+    this->addRecordMenuOpened = false;
 }
 
 
@@ -387,7 +396,6 @@ void MainWindow::on_changeBtn_clicked()
 void MainWindow::on_searchLine_textEdited(const QString &arg1)
 {
 
-    qDebug() << "filter";
     displayRecords();
 }
 

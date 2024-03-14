@@ -21,11 +21,14 @@ public:
 signals:
     void copyRecordLogin(int recordId);
     void copyRecordPass(int recordId);
+    void deleteRecord(int recordId);
 
 private slots:
     void on_copyLogin_clicked();
 
     void on_copyPass_clicked();
+
+    void on_delBtn_clicked();
 
 private:
     Ui::recordWiget *ui;

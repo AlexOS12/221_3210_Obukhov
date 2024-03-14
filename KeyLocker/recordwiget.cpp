@@ -27,3 +27,9 @@ void recordWiget::on_copyPass_clicked()
     emit copyRecordPass(this->recordId);
 }
 
+
+void recordWiget::on_delBtn_clicked()
+{
+    emit deleteRecord(this->recordId);
+}
+
