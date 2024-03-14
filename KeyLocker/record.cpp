@@ -20,10 +20,7 @@ QString Record::getPass(QByteArray key, QByteArray iv)
 
     Encryptor::getInstance().decrypt(this->credentials, decrypted, key, iv);
     QJsonDocument credits;
-    qDebug() << "getPass";
-    qDebug() << "decrypted: " << decrypted;
     credits = QJsonDocument::fromJson(decrypted);
-    qDebug() << "credits: " << credits.toJson();
     return credits["pass"].toString();
 }
 
@@ -53,13 +50,8 @@ void Record::reEncryptCredentials(QByteArray oldKey, QByteArray oldIV, QByteArra
     QByteArray newCredentials;
     QByteArray decryptedCredits;
 
-    qDebug() << "reEncryptCredentials:";
-    qDebug() << this->credentials;
     Encryptor::getInstance().decrypt(this->credentials, decryptedCredits, oldKey, oldIV);
-    qDebug() << decryptedCredits;
     Encryptor::getInstance().encrypt(decryptedCredits, newCredentials, newKey, newIV);
-
-
 
     this->credentials = newCredentials;
     qDebug() << this->credentials;

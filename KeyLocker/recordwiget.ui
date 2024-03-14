@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>102</height>
+    <height>126</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,6 +39,12 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLabel" name="label_2">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
+       </property>
        <property name="text">
         <string>Логин:</string>
        </property>
@@ -53,8 +59,8 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>30</width>
-           <height>0</height>
+           <width>0</width>
+           <height>30</height>
           </size>
          </property>
          <property name="text">
@@ -95,6 +101,12 @@
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QLabel" name="label_3">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
+       </property>
        <property name="text">
         <string>Пароль:</string>
        </property>
@@ -109,8 +121,8 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>30</width>
-           <height>0</height>
+           <width>0</width>
+           <height>30</height>
           </size>
          </property>
          <property name="text">
@@ -161,6 +173,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="delBtn">
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>30</width>

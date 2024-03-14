@@ -226,9 +226,10 @@ void MainWindow::displayRecords()
             qDebug() << i;
 
             QListWidgetItem* item = new QListWidgetItem();
-            item->setSizeHint({500, 102});
 
             recordWiget* recordwidget = new recordWiget(ui->listWidget, i, records[i].site);
+
+            item->setSizeHint(recordwidget->size());
 
             QObject::connect(recordwidget, SIGNAL(copyRecordLogin(int)), this, SLOT(copyRecordLogin(int)));
             QObject::connect(recordwidget, SIGNAL(copyRecordPass(int)), this, SLOT(copyRecordPass(int)));
@@ -347,7 +348,7 @@ void MainWindow::on_addNewRecBtn_clicked()
     QObject::connect(recordwidget, SIGNAL(copyRecordLogin(int)), this, SLOT(copyRecordLogin(int)));
     QObject::connect(recordwidget, SIGNAL(copyRecordPass(int)), this, SLOT(copyRecordPass(int)));
 
-    item->setSizeHint({500, 102});
+    item->setSizeHint(recordwidget->size());
     ui->listWidget->addItem(item);
     ui->listWidget->setItemWidget(item, recordwidget);
 
@@ -358,6 +359,8 @@ void MainWindow::on_addNewRecBtn_clicked()
     ui->newRecPass->clear();
     ui->newRecPass->hide();
     ui->addNewRecBtn->hide();
+
+    this->addRecordMenuOpened = false;
 }
 
 
