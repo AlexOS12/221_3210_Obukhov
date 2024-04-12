@@ -2,8 +2,6 @@
 #include <string>
 #include <fstream>
 
-
-
 void helpMenu() {
 	std::cout << "Enter filename and operation to do:\n";
 	std::cout << "ReadWrite [r/w/h] [fileName] [text to write]\n";
