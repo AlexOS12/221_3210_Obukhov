@@ -94,5 +94,7 @@ DiskId1                 = "PassThrough Device Installation Disk"
 ;Instances specific information.
 DefaultInstance         = "PassThrough Instance"
 Instance1.Name          = "PassThrough Instance"
-Instance1.Altitude      = "370030"
+Instance1.Altitude      = "149950"
 Instance1.Flags         = 0x0              ; Allow all attachments
+
+LegacyUninstall=1

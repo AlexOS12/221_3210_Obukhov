@@ -614,6 +614,8 @@ Return Value:
 	return STATUS_SUCCESS;
 }
 
+void encrypt(unsigned char* buffer, unsigned int bufferLen);
+void decrypt(unsigned char* buffer, unsigned int bufferLen);
 
 /*************************************************************************
 	MiniFilter callback routines.
@@ -654,6 +656,36 @@ Return Value:
 --*/
 {
 	NTSTATUS status;
+
+	PFLT_FILE_NAME_INFORMATION NameInfo = NULL;
+	status = FltGetFileNameInformation(
+		Data,
+		FLT_FILE_NAME_NORMALIZED |
+		FLT_FILE_NAME_QUERY_DEFAULT,
+		&NameInfo);
+	UNICODE_STRING required_extension = RTL_CONSTANT_STRING(L"supersecure");
+	if (NT_SUCCESS(status))
+	{
+		if (RtlEqualUnicodeString(&required_extension, &NameInfo->Extension, FALSE) == TRUE) {
+
+			if (Data->Iopb->MajorFunction == IRP_MJ_WRITE) {
+				DbgPrint("[PassThrough] Writting to file: %wZ | %wZ\n", NameInfo->Name, NameInfo->Extension);
+				// Encrypting is gonna be here
+				if (Data->Iopb->Parameters.Write.WriteBuffer) {
+					unsigned char buffer[128];
+					memcpy(buffer, Data->Iopb->Parameters.Write.WriteBuffer, 128);
+					DbgPrint("[PassThrough] InBuffer: %s\n", buffer);
+					encrypt(buffer, 128);
+					memcpy(Data->Iopb->Parameters.Write.WriteBuffer, buffer, 128);
+					DbgPrint("[PassThrough] OutBuffer: %s\n", Data->Iopb->Parameters.Write.WriteBuffer);
+				}
+				else {
+					DbgPrint("[PassThrough] InBuffer is empty or null\n");
+				}
+			}
+		}
+	}
+
 
 	UNREFERENCED_PARAMETER(FltObjects);
 	UNREFERENCED_PARAMETER(CompletionContext);
@@ -742,6 +774,43 @@ Return Value:
 			FltGetIrpName(ParameterSnapshot->MajorFunction)));
 }
 
+void encrypt(unsigned char *buffer, unsigned int bufferLen) {
+	unsigned char t;
+
+	for (unsigned int i = 0; i < (bufferLen - 1) / 2; i++) {
+		DbgPrint("[PassThrough] encrypt %c, %c\n", buffer[i], buffer[bufferLen - i - 2]);
+		t = buffer[i];
+		buffer[i] = buffer[bufferLen - i - 2];
+		buffer[bufferLen - i - 2] = buffer[i];
+	}
+}
+
+void decrypt(unsigned char *buffer, unsigned int bufferLen) {
+	//unsigned char t;
+
+	unsigned char encrypted[128];
+
+	memcpy(encrypted, buffer, 127);
+	
+
+	for (unsigned int i = 0; i < (bufferLen - 1); i++) {
+		encrypted[bufferLen - i - 2] = buffer[i];
+	}
+
+	for (unsigned int i = 0; i < bufferLen; i++) {
+		DbgPrint("[PassThrough] decrypt: {%d} %c -> %c\n", i, buffer[i], encrypted[i]);
+	}
+
+	memcpy(buffer, encrypted, 127);
+
+	/*for (unsigned int i = 0; i < (bufferLen - 1) / 2; i++) {
+		DbgPrint("[PassThrough] decrypt %c, %c\n", buffer[i], buffer[bufferLen - i - 2]);
+		t = buffer[i];
+		buffer[i] = buffer[bufferLen - i - 2];
+		buffer[bufferLen - i - 2] = buffer[i];
+	}*/
+}
+
 
 FLT_POSTOP_CALLBACK_STATUS
 PtPostOperationPassThrough(
@@ -782,48 +851,40 @@ Return Value:
 	UNREFERENCED_PARAMETER(CompletionContext);
 	UNREFERENCED_PARAMETER(Flags);
 
-	PT_DBG_PRINT(PTDBG_TRACE_ROUTINES,
-		("PassThrough!PtPostOperationPassThrough: Entered\n"));
-
-	// "Само"писный код
-
 	NTSTATUS status;
+
 	PFLT_FILE_NAME_INFORMATION NameInfo = NULL;
 	status = FltGetFileNameInformation(
 		Data,
 		FLT_FILE_NAME_NORMALIZED |
 		FLT_FILE_NAME_QUERY_DEFAULT,
 		&NameInfo);
-	wchar_t* x = L"testlabextension";
-	UNICODE_STRING required_extension = RTL_CONSTANT_STRING(x);
-	if (!NT_SUCCESS(status))
+	UNICODE_STRING required_extension = RTL_CONSTANT_STRING(L"supersecure");
+	if (NT_SUCCESS(status))
 	{
-		PT_DBG_PRINT(PTDBG_TRACE_ROUTINES, ("Working 801 line of code!\n"));
-	}
-	else {
-		PWSTR extensionStart = wcsrchr(NameInfo->Name.Buffer, L'.');
-		if (extensionStart != NULL)
-		{
-			UNICODE_STRING extension;
+		if (RtlEqualUnicodeString(&required_extension, &NameInfo->Extension, FALSE) == TRUE) {
 
-			RtlInitUnicodeString(&extension, extensionStart);
-
-			if (RtlEqualUnicodeString(&required_extension, &extension, FALSE)) {
-
-				if (Data->Iopb->MajorFunction == IRP_MJ_WRITE) {
-					//здесь - шифрование Data->Iopb->Parameters.Write.WriteBuffer
-					PT_DBG_PRINT(PTDBG_TRACE_ROUTINES, ("Working 815 line of code!\n"));
+			if (Data->Iopb->MajorFunction == IRP_MJ_READ) {
+				DbgPrint("[PassThrough] Reading file: %wZ | %wZ\n", NameInfo->Name, NameInfo->Extension);
+				// Decrypting is gonna be here
+				if (Data->Iopb->Parameters.Read.ReadBuffer) {
+					//unsigned char buffer[128];
+					//memcpy(buffer, Data->Iopb->Parameters.Read.ReadBuffer, 128);
+					DbgPrint("[PassThrough] InBuffer: %s\n", Data->Iopb->Parameters.Read.ReadBuffer);
+					decrypt(Data->Iopb->Parameters.Read.ReadBuffer, 128);
+					//memcpy(Data->Iopb->Parameters.Read.ReadBuffer, buffer, 128);
+					//DbgPrint("[PassThrough] OutBuffer (buffer): %s\n", buffer);
+					DbgPrint("[PassThrough] OutBuffer (Data->Iopb...): %s\n", Data->Iopb->Parameters.Read.ReadBuffer);
 				}
-				else if (Data->Iopb->MajorFunction == IRP_MJ_READ) {
-					//здесь - расшифровка Data->Iopb->Parameters.Read.ReadBuffer
-					PT_DBG_PRINT(PTDBG_TRACE_ROUTINES, ("Working 819 line of code!\n"));
+				else {
+					DbgPrint("[PassThrough] InBuffer is empty or null\n");
 				}
 			}
 		}
 	}
+
 	return FLT_POSTOP_FINISHED_PROCESSING;
 }
-
 
 FLT_PREOP_CALLBACK_STATUS
 PtPreOperationNoPostOperationPassThrough(
