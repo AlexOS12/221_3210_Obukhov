@@ -21,6 +21,7 @@ Environment:
 #include <fltKernel.h>
 #include <dontuse.h>
 #include <suppress.h>
+#include "aes.h"
 
 #pragma prefast(disable:__WARNING_ENCODE_MEMBER_FUNCTION_POINTER, "Not valid for kernel mode drivers")
 
@@ -672,11 +673,29 @@ Return Value:
 				DbgPrint("[PassThrough] Writting to file: %wZ | %wZ\n", NameInfo->Name, NameInfo->Extension);
 				// Encrypting is gonna be here
 				if (Data->Iopb->Parameters.Write.WriteBuffer) {
-					unsigned char buffer[128];
+					/*unsigned char buffer[128];
 					memcpy(buffer, Data->Iopb->Parameters.Write.WriteBuffer, 128);
 					DbgPrint("[PassThrough] InBuffer: %s\n", buffer);
 					encrypt(buffer, 128);
+					memcpy(Data->Iopb->Parameters.Write.WriteBuffer, buffer, 128);*/
+
+					DbgPrint("[PassThrough] InBuffer: %s\n", Data->Iopb->Parameters.Write.WriteBuffer);
+
+					// Key and IV for AES
+					uint8_t *key[32] = { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f };
+					uint8_t* iv[16] = { 0xd, 0xe, 0xf, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c };
+
+					uint8_t buffer[128];
+
+					memcpy(buffer, Data->Iopb->Parameters.Write.WriteBuffer, 128);
+
+					// Initializing AES
+					struct AES_ctx ctx;
+					AES_init_ctx_iv(&ctx, key, iv);
+					AES_CBC_encrypt_buffer(&ctx, buffer, 128);
+
 					memcpy(Data->Iopb->Parameters.Write.WriteBuffer, buffer, 128);
+
 					DbgPrint("[PassThrough] OutBuffer: %s\n", Data->Iopb->Parameters.Write.WriteBuffer);
 				}
 				else {
@@ -774,7 +793,7 @@ Return Value:
 			FltGetIrpName(ParameterSnapshot->MajorFunction)));
 }
 
-void encrypt(unsigned char *buffer, unsigned int bufferLen) {
+void encrypt(unsigned char* buffer, unsigned int bufferLen) {
 	unsigned char t;
 
 	for (unsigned int i = 0; i < (bufferLen - 1) / 2; i++) {
@@ -785,13 +804,13 @@ void encrypt(unsigned char *buffer, unsigned int bufferLen) {
 	}
 }
 
-void decrypt(unsigned char *buffer, unsigned int bufferLen) {
+void decrypt(unsigned char* buffer, unsigned int bufferLen) {
 	//unsigned char t;
 
 	unsigned char encrypted[128];
 
 	memcpy(encrypted, buffer, 127);
-	
+
 
 	for (unsigned int i = 0; i < (bufferLen - 1); i++) {
 		encrypted[bufferLen - i - 2] = buffer[i];
@@ -871,9 +890,22 @@ Return Value:
 					//unsigned char buffer[128];
 					//memcpy(buffer, Data->Iopb->Parameters.Read.ReadBuffer, 128);
 					DbgPrint("[PassThrough] InBuffer: %s\n", Data->Iopb->Parameters.Read.ReadBuffer);
-					decrypt(Data->Iopb->Parameters.Read.ReadBuffer, 128);
-					//memcpy(Data->Iopb->Parameters.Read.ReadBuffer, buffer, 128);
-					//DbgPrint("[PassThrough] OutBuffer (buffer): %s\n", buffer);
+					
+					// Key and IV for AES
+					uint8_t* key[32] = { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f };
+					uint8_t* iv[16] = { 0xd, 0xe, 0xf, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c };
+
+					uint8_t buffer[128];
+
+					memcpy(buffer, Data->Iopb->Parameters.Read.ReadBuffer, 128);
+
+					//Initializin AES
+					struct AES_ctx ctx;
+					AES_init_ctx_iv(&ctx, key, iv);
+					AES_CBC_decrypt_buffer(&ctx, buffer, 128);
+
+					memcpy(Data->Iopb->Parameters.Read.ReadBuffer, buffer, 128);
+
 					DbgPrint("[PassThrough] OutBuffer (Data->Iopb...): %s\n", Data->Iopb->Parameters.Read.ReadBuffer);
 				}
 				else {
