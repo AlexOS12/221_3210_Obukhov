@@ -22,6 +22,9 @@
     <ClCompile Include="passThrough.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="aes.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="passThrough.rc">
@@ -32,5 +35,10 @@
     <Inf Include="*.inf">
       <Filter>Driver Files</Filter>
     </Inf>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
